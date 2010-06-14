@@ -50,7 +50,7 @@
 <p>
   <b>Estimated Time:</b> <%=h @project.eta %> days
 </p>
-
+<br>
 <%= render :partial => "tasks/list", :locals => { :project => @project, :tasks => @tasks }%>
 
 	<p class="links">

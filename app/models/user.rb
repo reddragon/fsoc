@@ -40,6 +40,7 @@ class User < ActiveRecord::Base
   has_many :proposal_mentorships, :through => :project_mentorships, :source => 'proposals'  
   has_many :task_authorships, :class_name => "Task", :foreign_key => 'author_id'
   has_many :comments
+  has_many :journals
   has_many :proposals, :foreign_key => 'student_id'
   has_one :accepted_proposal, :class_name => 'Proposal', :foreign_key => 'student_id', :conditions => { :status => 'accepted' }
   has_one :project, :through => :accepted_proposal

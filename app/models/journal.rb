@@ -1,5 +1,5 @@
 #--
-#   Copyright (C) 2010 Shreyank Gupta <sgupta@REDHAT.COM>
+#   Copyright (C) 2010 Gaurav Menghani <gaurav.menghani@gmail.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -15,15 +15,8 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-class Task < ActiveRecord::Base
-  validates_presence_of :title, :description, :eta
-  validates_numericality_of :eta, :greater_than => 0
-  
-  belongs_to :author, :class_name => "User", :foreign_key => "author_id"
-
-  belongs_to :project
-  belongs_to :proposal
-  has_one :student, :through => :proposal
-  has_one :mentor, :through => :project
-  has_many :journals
+class Journal < ActiveRecord::Base
+  validates_presence_of :title, :content
+  belongs_to :task
+  belongs_to :user
 end

@@ -108,6 +108,11 @@ module AccessControl
       can_edit_project?(task.project) && task.mentor == current_user && task.status == 'resolved'
     end
 
+	#A message can be sent only if the task is open, not yet resolved.
+	def can_send_task_message?(task)
+	  can_edit_project?(task.project) && (task.author == current_user || task.mentor == current_user) && (task.proposal != nil)
+	end
+
     def can_view_task?(task)
       true
     end
@@ -116,14 +121,35 @@ module AccessControl
       student? && current_user == task.student
     end
 		
-	  #comment specific
-	  def can_delete_comment?(comment)
-		  comment.user == current_user || admin?
-	  end
+	#comment specific
+	def can_delete_comment?(comment)
+      comment.user == current_user || admin?
+    end
 	
-	  def can_edit_comment?(comment)
-		  comment.user == current_user
-	  end
+    def can_edit_comment?(comment)
+	  comment.user == current_user
+    end
+	
+	#Journal specific
+	def can_see_journal?(task)
+	  can_edit_project?(task.project) || (current_user == task.student)
+	end
+	
+	def can_add_journal_entry?(task)
+	  current_user == task.student
+	end
+	
+	def can_add_journal_comment?(task)
+	  can_see_journal?(task)
+	end
+	
+	def can_edit_journal?(journal)
+	  journal.user == current_user
+	end
+	
+	def can_delete_journal?(journal)
+	  can_edit_journal?(journal) || (journal.task.project.mentor == current_user) || admin?
+	end
 	
     #Make available as ActionView helper methods.
     def self.included(base)
@@ -135,7 +161,9 @@ module AccessControl
         base.send :helper_method, :can_accept_proposal?, :can_signoff_proposal?
         base.send :helper_method, :can_add_task?, :can_edit_task?, \
           :can_view_task_list?, :can_delete_comment?, :can_edit_comment?
-        base.send :helper_method, :student_for_task?, :can_signoff_task?
+        base.send :helper_method, :student_for_task?, :can_signoff_task?, \
+		  :can_send_task_message?, :can_see_journal?, :can_add_journal_entry?, \
+		  :can_add_journal_comment?, :can_edit_journal?, :can_delete_journal?
       end
     end  
 end

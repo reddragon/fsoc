@@ -125,5 +125,29 @@ class TasksController < ApplicationController
     end
     redirect_to @task.project 
   end
+  
+  def sendmessage
+    @task = Task.find(params[:id])
+	if can_send_task_message?(@task)
+	  @subject = "Task #{@task.title} for the project #{@task.project.name}"
+    else
+        flash[:notice] = 'You are not authorized to perform this operation.'	
+		redirect_to @task.project
+	end
+  end
+  
+  def delivermessage
+    @task = Task.find(params[:id])
+	if can_send_task_message?(@task)
+	  @message = params[:message]
+	  @subject = "Task #{@task.title} for the project #{@task.project.name}"
+	  Mail.deliver_message(@task.student.email, @subject, @message)
+	  flash[:notice] = "Message successfully delivered."
+	  redirect_to :project_task
+	else
+	  flash[:notice] = 'You are not authorized to perform this operation.'
+	  redirect_to @task
+	end
+  end
 
 end

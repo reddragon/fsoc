@@ -1,0 +1,51 @@
+-#--
+-#   Copyright (C) 2010 Gaurav Menghani <gaurav.menghani@gmail.com>
+-#
+-#   This program is free software: you can redistribute it and/or modify
+-#   it under the terms of the GNU Affero General Public License as published by
+-#   the Free Software Foundation, either version 3 of the License, or
+-#   (at your option) any later version.
+-#
+-#   This program is distributed in the hope that it will be useful,
+-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-#   GNU Affero General Public License for more details.
+-#
+-#   You should have received a copy of the GNU Affero General Public License
+-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-#++
+
+.post
+  %h2.title
+    Send Message
+  %p.meta
+    %span.date &nbsp;
+  %div{:style => 'clear: both;'} &nbsp;
+  %p
+    Send a message to the student regarding the task
+    = @task.title
+  %p
+    - form_tag delivermessage_project_task_path, :method => :put do
+      %b Student:
+      =link_to_user @task.student
+      %br 
+      %br
+      
+      %b Subject:
+      =@subject
+      %br
+      %br
+      
+      %b Body:
+      %br
+      -#HAML interpreter gives an error if I do not give another argument
+      -#I wonder why the second arg is needed.
+      =text_area :message, ''
+      %br
+      
+      =submit_tag 'Send'
+  
+  %p.links
+    = link_to 'Back to Task', project_task_path(@task.project, @task)
+    &nbsp;|&nbsp; 
+    = link_to 'Back to Project', project_path(@task.project)
