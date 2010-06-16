@@ -1,0 +1,56 @@
+-#--
+-#   Copyright (C) 2010 Gaurav Menghani <gaurav.menghani@gmail.com>
+-#
+-#   This program is free software: you can redistribute it and/or modify
+-#   it under the terms of the GNU Affero General Public License as published by
+-#   the Free Software Foundation, either version 3 of the License, or
+-#   (at your option) any later version.
+-#
+-#   This program is distributed in the hope that it will be useful,
+-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-#   GNU Affero General Public License for more details.
+-#
+-#   You should have received a copy of the GNU Affero General Public License
+-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-#++
+
+.post
+  %h2.title
+    Comments on 
+    =h @project.name
+  %p.meta
+    %span.date &nbsp;
+  %div{:style => 'clear: both;'} &nbsp;
+  
+  - if @comments.empty?
+    %b No comments posted yet
+  - else
+    %table{:id => 'hor-minimalist-a'}
+      - @comments.each do |comment|
+        %tr
+          %th
+            - user = comment.user
+            = link_to_user user
+            %small
+              Last Edited
+              = distance_of_time_in_words(comment.updated_at, Time.now, true)
+              back
+        
+        %tr
+          %td
+            =h comment.content
+            %br
+            %small
+              - if can_edit_comment?(comment)
+                = link_to 'Edit', edit_project_comment_path(@project,comment)
+                |
+              - if can_delete_comment?(comment)
+                = link_to 'Delete', project_comment_path(@project, comment), :confirm => 'Are you sure?', :method => :delete
+
+  %p.links
+    - if logged_in?
+      = link_to 'New comment', new_project_comment_path(@project)
+      | 
+      = link_to 'Back to Project', project_path(@project)
+

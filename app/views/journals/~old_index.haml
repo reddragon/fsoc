@@ -26,32 +26,32 @@
   - if @journals.empty?
     %b No journal entries posted yet
   - else
-    - @journals.each do |journal|
-      .post
-        %h3{:class => 'title'}
-          = journal.title
-        %p{:class => 'meta'}
-          %span{:class => 'date'}
-            Last edited
-            = distance_of_time_in_words(journal.updated_at, Time.now, true)
-            back
-          %span{:class => 'posted'}
-            - if journal.user == @task.student
-              Posted by 
-            - else
-              Comment by 
-            = link_to_user journal.user 
-        %div{:style => 'clear: both;'}
-          &nbsp;
-        %div{:class => 'entry'}
-          = journal.content
-          %br
-          %small
-            - if can_edit_journal?(journal)
-              = link_to 'Edit | ', edit_project_task_journal_path(@task.project, @task, journal)
-            - if can_delete_journal?(journal)
-              = link_to 'Delete', project_task_journal_path(@task.project, @task, journal), :confirm => 'Are you sure?', :method => :delete
-        
+    %table{:id => 'hor-minimalist-a'}
+      - @journals.each do |journal|
+        %tr
+          %th
+            %b
+              - if journal.user == @task.student
+                Journal Entry by 
+              - else
+                Comment by 
+              = link_to_user journal.user
+            %small
+              Last edited
+              = distance_of_time_in_words(journal.updated_at, Time.now, true)
+              back
+        %tr
+          %td
+            %b
+              = journal.title
+            %br
+            = journal.content
+            %br
+            %small
+              - if can_edit_journal?(journal)
+                = link_to 'Edit | ', edit_project_task_journal_path(@task.project, @task, journal)
+              - if can_delete_journal?(journal)
+                = link_to 'Delete', project_task_journal_path(@task.project, @task, journal), :confirm => 'Are you sure?', :method => :delete
             
   
   %p.links
