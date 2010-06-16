@@ -16,6 +16,9 @@ Rails::Initializer.run do |config|
 
   # Specify gems that this application depends on and have them installed with rake gems:install
   config.gem "haml"
+  #For automatic reminders, we need the following two gems
+  config.gem "chronic"
+  config.gem "javan-whenever", :lib => false, :source => 'http://gems.github.com'
   # config.gem "hpricot", :version => '0.6', :source => "http://code.whytheluckystiff.net"
   # config.gem "sqlite3-ruby", :lib => "sqlite3"
   # config.gem "aws-s3", :lib => "aws/s3"

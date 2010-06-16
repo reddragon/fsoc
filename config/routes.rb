@@ -37,7 +37,10 @@ ActionController::Routing::Routes.draw do |map|
     project.resources :proposals, :member => { :allocate => :get, :allocated => :put, :reject => :get, :signoff => :get }
   end
   map.resources :projects do |project| 
-    project.resources :tasks, :member => { :unallocate => :get, :open => :get, :resolve => :get, :signoff => :get }
+    project.resources :tasks, :member => { :unallocate => :get, :open => :get, :resolve => :get, :signoff => :get, :sendmessage => :get, :delivermessage => :put }
+    project.resources :tasks do |task|
+	  task.resources :journals
+	end
   end
 
   

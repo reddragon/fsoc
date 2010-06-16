@@ -9,11 +9,20 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100519145341) do
+ActiveRecord::Schema.define(:version => 20100615181621) do
 
   create_table "comments", :force => true do |t|
     t.text     "content"
     t.integer  "project_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "user_id"
+  end
+
+  create_table "journals", :force => true do |t|
+    t.text     "title"
+    t.text     "content"
+    t.integer  "task_id"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "user_id"
