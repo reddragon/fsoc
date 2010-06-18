@@ -15,37 +15,12 @@
 -#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -#++
 
-.post
-  %h2.title
-    Send Message
-  %p.meta
-    %span.date &nbsp;
-  %div{:style => 'clear: both;'} &nbsp;
-  %p
-    Send a message to the student regarding the task
-    = @task.title
-  %p
-    - form_tag delivermessage_project_task_path, :method => :put do
-      %b Student:
-      =link_to_user @task.student
-      %br 
-      %br
+%b
+  %br
+    New Journal Entry
+  - form_for @journal, :url => {:action => :create, :project_id => @task.project.id, :task_id => @task.id }do |f|
+    = f.error_messages
+    = f.text_area :content
+    %br
+    = f.submit 'Create'
       
-      %b Subject:
-      =@subject
-      %br
-      %br
-      
-      %b Body:
-      %br
-      -#HAML interpreter gives an error if I do not give another argument
-      -#I wonder why the second arg is needed.
-      =text_area :message, ''
-      %br
-      
-      =submit_tag 'Send'
-  
-  %p.links
-    = link_to 'Back to Task', project_task_path(@task.project, @task)
-    &nbsp;|&nbsp; 
-    = link_to 'Back to Project', project_path(@task.project)

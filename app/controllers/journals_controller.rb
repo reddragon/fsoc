@@ -1,20 +1,31 @@
 class JournalsController < ApplicationController
+  include ApplicationHelper
   before_filter :login_required
   
-  def new
+  def inpage_new
     @task = Task.find(params[:task_id])
-    if can_add_journal_entry?(@task) || can_add_journal_comment?(@task)
-	  @journal = Journal.new
-	  @journal.task = @task
-	else
-	  flash[:notice] = 'You are not authorized to add entries to the Task Journal.'
-	  redirect_to project_task_path(@task.project, @task)
-	end
+    if can_add_journal_entry?(@task)
+      @journal = Journal.new
+      @journal.task = @task
+    else
+      flash[:notice] = 'You are not authorized to add entries to the Task Journal.'
+      redirect_to project_task_path(@task.project, @task)
+    end
+    
+    if params[:reply_to_id] != nil
+      original_journal = Journal.find(params[:reply_to_id])
+      original_journal.content = enquote(original_journal.content)
+      @journal.content = "(In reply to Journal Entry # #{original_journal.id})" + original_journal.content
+    end
+    
+    render :partial => "new"
   end
   
    def edit
     @journal = Journal.find(params[:id])
-	@task = Task.find(params[:task_id])
+    #Remove the br tags so that it can be displayed in a natural fashion
+    @journal.content = CGI.unescape(@journal.content).gsub(/<br>/,"\n")
+    @task = Task.find(params[:task_id])
     if !can_edit_journal?(@journal)
       flash[:notice] = 'You are not authorised to edit this journal entry/comment.'
       redirect_to project_task_journals_path(@task.project, @task)
@@ -22,62 +33,81 @@ class JournalsController < ApplicationController
   end
   
   def update
-    @journal = Journal.find(params[:id])
-	@task = Task.find(params[:task_id])
-	if !can_edit_journal?(@journal)
-	  flash[:notice] = 'You are not authorised to edit this journal entry/comment.'
-	  redirect_to project_task_journals_path(@task.project, @task)
-	else
-	  if @journal.update_attributes(:title => params[:journal][:title], :content => params[:journal][:content])
-	    flash[:notice] = 'Journal successfully updated.'
-		redirect_to project_task_journals_path(@task.project, @task)
-	  else
-	    flash[:notice] = 'Journal could not be updated.'
-	    redirect_to project_task_journals_path(@task.project, @task)
-	  end
-	end  
+    journal = Journal.find(params[:id])
+    task = Task.find(params[:task_id])
+    if !can_edit_journal?(journal)
+      flash[:notice] = 'You are not authorised to edit this journal entry/comment.'
+      redirect_to project_task_journals_path(task.project, task)
+    else
+      #Convert endlines to <br/>
+      journal_content = params[:journal][:content]
+      journal_content = CGI.unescape(journal_content).gsub(/\n/,"<br>")
+      #TODO: Santize tags here, excluding the br tag
+      if journal.update_attributes(:content => journal_content)
+        flash[:notice] = 'Journal successfully updated.'
+        redirect_to project_task_journals_path(task.project, task)
+      else
+	flash[:notice] = 'Journal could not be updated.'
+	redirect_to project_task_journals_path(task.project, task)
+      end
+    end  
   end
   
   def create
-    @journal = Journal.new
-	@journal.task = Task.find(params[:task_id])
-	@journal.content = params[:journal][:content]
-	@journal.title = params[:journal][:title]
-	@journal.user = current_user
+    journal = Journal.new
+    journal.task = Task.find(params[:task_id])
+    journal.content = params[:journal][:content]
+    journal.user = current_user
 	
-	if !can_add_journal_entry?(@journal.task) && !can_add_journal_comment?(@journal.task)
-	  flash[:notice] = 'You are not authorized to add entries to the Task Journal.'
-	end
-	flash[:notice] = @journal.content
-	
-	if @journal.save
-	  flash[:notice] = 'Journal entry was successfully created.'
-      redirect_to project_task_journals_path(@journal.task.project, @journal.task)
+    if !can_add_journal_entry?(journal.task)
+      flash[:notice] = 'You are not authorized to add entries to the Task Journal.'
+      redirect_to project_task_journals_path(journal.task.project, journal.task)
+    end
+    
+    original_content = journal.content
+    #Convert endlines to <br/>
+    journal.content = CGI.unescape(journal.content).gsub(/\n/,"<br>")
+    #TODO: Santize tags here, excluding the br tag
+    if journal.save
+      #Send mail when an entry is created
+      subject = "New entry in the Task Journal of your project #{journal.task.project.name}"
+      message = "A new entry was made by #{journal.user.login} in the Task Journal of the task #{journal.task.title} of your project #{journal.task.project.name}.\nThe contents are as follows:\n" + original_content
+      
+      #There may not be a student and/or mentor associated with the project yet
+      if(journal.task.student != nil)
+        Mail.deliver_message(subject, journal.task.student.email, message)
+      end
+      if(journal.task.project.mentor != nil)
+        Mail.deliver_message(subject, journal.task.project.mentor.email, message)
+      end
+      
+      flash[:notice] = 'Journal entry was successfully created.'
+      redirect_to project_task_journals_path(journal.task.project, journal.task)
     else
       flash[:notice] = 'Could not create new journal entry'    
-      redirect_to project_task_journals_path(@journal.task.project, @journal.task)
+      redirect_to project_task_journals_path(journal.task.project, journal.task)
     end
 	
   end
   
   def index
     @task = Task.find(params[:task_id])
-	if can_see_journal?(@task)
-	  @journals = @task.journals
-	else
-	  flash[:notice] = 'You are not authorized to see the Task Journal.'
-	  redirect_to project_task_path(@task.project, @task)
-	end
+    if can_see_journal?(@task)
+      @journals = @task.journals
+    else
+      flash[:notice] = 'You are not authorized to see the Task Journal.'
+      redirect_to project_task_path(@task.project, @task)
+    end
   end
   
   def destroy
-    @journal = Journal.find(params[:id])
-    if !can_delete_journal?(@journal)
+    journal = Journal.find(params[:id])
+    if !can_delete_journal?(journal)
       flash[:notice] = 'You are not authorised to delete this journal entry/comment.'
-      redirect_to project_task_journals_path(@journal.task.project, @journal.task)
+      redirect_to project_task_journals_path(journal.task.project, journal.task)
     end
-    @journal.destroy
+    journal.destroy
     flash[:notice] = 'Journal entry/comment was successfully deleted.'
-    redirect_to project_task_journals_path(@journal.task.project, @journal.task)
+    redirect_to project_task_journals_path(journal.task.project, journal.task)
   end
 end

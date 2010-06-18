@@ -276,6 +276,10 @@ a:hover {
 	text-align: justify;
 }
 
+.post .rightfloat {
+   float: right;
+}
+
 .links {
 	padding-top: 20px;
 	font-size: 12px;

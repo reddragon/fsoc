@@ -16,7 +16,7 @@
 #++
 
 class Journal < ActiveRecord::Base
-  validates_presence_of :title, :content
+  validates_presence_of :content
   belongs_to :task
   belongs_to :user
 end

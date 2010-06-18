@@ -63,4 +63,14 @@ module ApplicationHelper
       'Accept and allocate tasks'
     end
   end
+  
+  def enquote(str)
+    lines = str.split(/<br>/)
+    res = ""
+    lines.each do |line|
+      res = res + "\n>" + line
+    end
+    res
+  end
+  
 end

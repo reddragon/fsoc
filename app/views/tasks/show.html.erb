@@ -59,9 +59,6 @@
 	  <% if can_see_journal?(@task) %>
 	    <%= link_to 'Task Journal', project_task_journals_path(@task.project, @task) %> |
 	  <% end %>
-	  <% if can_send_task_message?(@task) %>
-            <%= link_to 'Send Message', sendmessage_project_task_path(@task.project, @task) %> |
-          <% end %>
 	  <% if can_edit_task?(@task) %>
   	    <%= link_to 'Edit this task', edit_project_task_path %> | 
   	  <% end %>

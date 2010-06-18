@@ -126,16 +126,6 @@ class TasksController < ApplicationController
     redirect_to @task.project 
   end
   
-  def sendmessage
-    @task = Task.find(params[:id])
-	if can_send_task_message?(@task)
-	  @subject = "Task #{@task.title} for the project #{@task.project.name}"
-    else
-        flash[:notice] = 'You are not authorized to perform this operation.'	
-		redirect_to @task.project
-	end
-  end
-  
   def delivermessage
     @task = Task.find(params[:id])
 	if can_send_task_message?(@task)

@@ -16,30 +16,39 @@
 #++
 
 class CommentsController < ApplicationController
+  include ApplicationHelper
   before_filter :login_required, :except => 'index'
   
   def index  
     @project = Project.find(params[:project_id])
     @comments = @project.comments
   end
-
-  def new
+  
+  def inpage_new
     @comment = Comment.new
-    project = Project.find(params[:project_id])
+    project = Project.find(params[:id])
+    if params[:reply_to_id] != nil
+      original_comment = Comment.find(params[:reply_to_id])
+      original_comment.content = enquote(original_comment.content)
+      @comment.content = "(In reply to Comment # #{original_comment.id})" + original_comment.content
+    end
     @comment.project = project
+    render :partial => "new", :task_id => :id
   end
 
   def edit
-    @comment = Comment.find(params[:id])
+    @comment = Comment.find(params[:id])  
     if !can_edit_comment?(@comment)
       flash[:notice] = 'You are not authorised to edit this comment.'
       redirect_to project_comments_url
       end
+    #Remove the br tags so that it can be displayed in a natural fashion
+    @comment.content = CGI.unescape(@comment.content).gsub(/<br>/,"\n")
   end
   
   def update
-    @task = Comment.find(params[:id])
-    if @task.update_attributes(params[:comment])
+    task = Comment.find(params[:id])
+    if task.update_attributes(params[:comment])
       flash[:notice] = 'Comment was successfully edited.'
       redirect_to project_comments_url
     else
@@ -49,24 +58,27 @@ class CommentsController < ApplicationController
   end
 
   def create
-    @comment = Comment.new(params[:comment])
-    @comment.user = current_user
-    if @comment.save
+    comment = Comment.new(params[:comment])
+    #Convert endlines to <br/>
+    comment.content = CGI.unescape(comment.content).gsub(/\n/,"<br>")
+    #TODO: Santize tags here, excluding the br tag
+    comment.user = current_user
+    if comment.save
       flash[:notice] = 'Comment was successfully created.'
       redirect_to project_comments_url
     else
-      flash[:notice] = 'Could not create new comment'    
+      flash[:notice] = 'Could not create new comment.'    
       redirect_to project_comments_url
     end
   end
   
   def destroy
-    @comment = Comment.find(params[:id])
-    if !can_delete_comment?(@comment)
+    comment = Comment.find(params[:id])
+    if !can_delete_comment?(comment)
       flash[:notice] = 'You are not authorised to delete this comment.'
       redirect_to project_comments_url
     end
-    @comment.destroy
+    comment.destroy
     flash[:notice] = 'Comment was successfully deleted.'
     redirect_to project_comments_url
   end
