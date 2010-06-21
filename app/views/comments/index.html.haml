@@ -46,23 +46,22 @@
         
         %tr
           %td
-            =comment.content
-            %br
+            = display_message_content(comment.content)
             %small
               - if can_edit_comment?(comment)
-                = link_to 'Edit', edit_project_comment_path(@project,comment)
+                = link_to_remote 'Edit', :update => "comment_space#{comment.id}", :url => {:action => 'inpage_edit', :id => comment.id, :project_id => @project.id}
                 |
               - if can_delete_comment?(comment)
                 = link_to 'Delete', project_comment_path(@project, comment), :confirm => 'Are you sure?', :method => :delete
                 |
-              = link_to_remote 'Reply', :update => "comment_space#{comment.id}", :url => {:action => 'inpage_new', :project_id => @project.id, :id => @project.id, :reply_to_id => comment.id}
+              = link_to_remote 'Reply', {:update => "comment_space", :url => {:action => 'inpage_new', :project_id => @project.id, :reply_to_id => comment.id}, :with => "'comment_content=' + $('comment_content').value"}
               %div{:id => "comment_space#{comment.id}"}
         
-  %div{:id => 'comment_space'}
-    
+  - if logged_in?
+    %div{:id => 'comment_space'}
+      = render :partial => "new", :locals => {:comment => @form_comment}
+  
   %p.links
     - if logged_in?
-      = link_to_remote 'New comment', :update => 'comment_space', :url => {:action => 'inpage_new', :project_id => @project.id, :id => @project.id} 
-      | 
       = link_to 'Back to Project', project_path(@project)
 

@@ -68,9 +68,26 @@ module ApplicationHelper
     lines = str.split(/<br>/)
     res = ""
     lines.each do |line|
-      res = res + "\n>" + line
+      res = res + "\n> " + line
     end
     res
   end
   
+  def wrap(txt, col = 80)
+    txt.gsub(/(.{1,#{col}})( +|$\n?)|(.{1,#{col}})/,
+     "\\1\\3\n") 
+  end
+  
+  def display_message_content(txt)
+    lines = txt.split(/<br>/)
+    res = ""
+    lines.each do |line|
+      if line[0] == 62
+        res = res + "<font color = 'blue'>" + line + "</font>" + '<br>'
+      else
+        res = res + line + '<br>'
+      end 
+    end
+    res
+  end
 end

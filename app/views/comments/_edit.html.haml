@@ -1,0 +1,14 @@
+%b 
+  %br
+  Edit Comment:
+  %br
+  
+- form_for @comment, :url => {:action => :update, :project_id => @comment.project.id} do |f|
+  = f.error_messages
+  = f.hidden_field :user_id, :value => current_user.id
+  = f.hidden_field :project_id, :value => @comment.project.id
+  = f.text_area(:content, :rows => 25)
+  %br
+  = f.submit 'Update'
+
+	

@@ -22,18 +22,24 @@ class CommentsController < ApplicationController
   def index  
     @project = Project.find(params[:project_id])
     @comments = @project.comments
+    @form_comment = Comment.new
+    @form_comment.project = @project
   end
   
   def inpage_new
     @comment = Comment.new
-    project = Project.find(params[:id])
+    project = Project.find(params[:project_id])
+    previous_content = params[:comment_content]
+    @comment.project = project
     if params[:reply_to_id] != nil
       original_comment = Comment.find(params[:reply_to_id])
+      original_comment.content = wrap(original_comment.content, 75)
+      original_comment.content = CGI.unescape(original_comment.content).gsub(/\n/,"<br>")
       original_comment.content = enquote(original_comment.content)
+      original_comment.content = original_comment.content + "\n\n" + previous_content
       @comment.content = "(In reply to Comment # #{original_comment.id})" + original_comment.content
     end
-    @comment.project = project
-    render :partial => "new", :task_id => :id
+    render :partial => "new", :locals => {:comment => @comment}
   end
 
   def edit
@@ -46,19 +52,37 @@ class CommentsController < ApplicationController
     @comment.content = CGI.unescape(@comment.content).gsub(/<br>/,"\n")
   end
   
+  
+  def inpage_edit
+    @comment = Comment.find(params[:id])
+    project = Project.find(params[:project_id])
+    if !can_edit_comment?(@comment)
+      flash[:notice] = 'You are not authorised to edit this comment.'
+      redirect_to_project_comments_url
+    end
+    @comment.content = CGI.unescape(@comment.content).gsub(/<br>/,"\n")
+    @comment.project = project
+    render :partial => "edit"
+  end
+  
   def update
-    task = Comment.find(params[:id])
-    if task.update_attributes(params[:comment])
+    comment = Comment.find(params[:id])
+    content = params[:comment][:content]
+    content = wrap(content, 75)
+    content = CGI.unescape(content).gsub(/\n/,"<br>")
+    if comment.update_attribute(:content, content)
       flash[:notice] = 'Comment was successfully edited.'
       redirect_to project_comments_url
     else
       flash[:notice] = 'Could not edit comment'        
-      render :action => "edit"
+      redirect_to project_comments_url
     end
   end
 
   def create
     comment = Comment.new(params[:comment])
+    #Add endlines after every 80 chars
+    comment.content = wrap(comment.content)
     #Convert endlines to <br/>
     comment.content = CGI.unescape(comment.content).gsub(/\n/,"<br>")
     #TODO: Santize tags here, excluding the br tag

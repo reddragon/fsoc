@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100618193921) do
+ActiveRecord::Schema.define(:version => 20100619193921) do
 
   create_table "comments", :force => true do |t|
     t.text     "content"
@@ -20,7 +20,6 @@ ActiveRecord::Schema.define(:version => 20100618193921) do
   end
 
   create_table "journals", :force => true do |t|
-    t.text     "title"
     t.text     "content"
     t.integer  "task_id"
     t.datetime "created_at"
