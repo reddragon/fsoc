@@ -54,7 +54,7 @@
               - if can_delete_comment?(comment)
                 = link_to 'Delete', project_comment_path(@project, comment), :confirm => 'Are you sure?', :method => :delete
                 |
-              = link_to_remote 'Reply', {:update => "comment_space", :url => {:action => 'inpage_new', :project_id => @project.id, :reply_to_id => comment.id}, :with => "'comment_content=' + $('comment_content').value"}
+              = link_to_remote 'Reply', {:update => "comment_space", :url => {:action => 'inpage_new', :project_id => @project.id, :reply_to_id => comment.id}, :with => "'comment_content=' + encodeURIComponent($('comment_content').value)"}
               %div{:id => "comment_space#{comment.id}"}
         
   - if logged_in?

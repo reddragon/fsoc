@@ -7,6 +7,7 @@ class JournalsController < ApplicationController
     if can_add_journal_entry?(@task)
       @journal = Journal.new
       @journal.task = @task
+      previous_content = params[:journal_content]
     else
       flash[:notice] = 'You are not authorized to add entries to the Task Journal.'
       redirect_to project_task_path(@task.project, @task)
@@ -18,8 +19,7 @@ class JournalsController < ApplicationController
       original_journal.content = CGI.unescape(original_journal.content).gsub(/\n/,"<br>")
       original_journal.content = enquote(original_journal.content)
       @journal.content = "(In reply to Journal Entry # #{original_journal.id})" + original_journal.content
-      #TODO: Fix multiple replies
-      #original_journal.content = original_journal.content + "\n\n" + previous_content
+      original_journal.content = original_journal.content + "\n\n" + previous_content
       @journal.content = "(In reply to Journal # #{original_journal.id})" + original_journal.content
     end
     render :partial => "new", :locals => {:journal => @journal}

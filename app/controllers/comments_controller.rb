@@ -37,7 +37,7 @@ class CommentsController < ApplicationController
       original_comment.content = CGI.unescape(original_comment.content).gsub(/\n/,"<br>")
       original_comment.content = enquote(original_comment.content)
       #TODO: Fix multiple replies
-      #original_comment.content = original_comment.content + "\n\n" + previous_content
+      original_comment.content = original_comment.content + "\n\n" + previous_content
       @comment.content = "(In reply to Comment # #{original_comment.id})" + original_comment.content
     end
     render :partial => "new", :locals => {:comment => @comment}
