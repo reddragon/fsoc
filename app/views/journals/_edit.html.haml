@@ -1,0 +1,9 @@
+- form_for @journal, :url => {:action => :update, :project_id => @task.project.id, :task_id => @task.id} do |f|
+  %p
+  %b
+    = f.label :content
+  %br
+  = f.text_area :content 
+  %br   
+  = f.submit 'Update'
+

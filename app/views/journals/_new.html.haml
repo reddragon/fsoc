@@ -18,9 +18,9 @@
 %b
   %br
     New Journal Entry
-  - form_for @journal, :url => {:action => :create, :project_id => @task.project.id, :task_id => @task.id }do |f|
+  - form_for journal, :url => {:action => :create, :project_id => journal.task.project.id, :task_id => journal.task.id }do |f|
     = f.error_messages
-    = f.text_area :content
+    = f.text_area(:content, :rows => 25, :cols => 80)
     %br
     = f.submit 'Create'
       

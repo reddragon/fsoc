@@ -14,23 +14,27 @@ class JournalsController < ApplicationController
     
     if params[:reply_to_id] != nil
       original_journal = Journal.find(params[:reply_to_id])
+      original_journal.content = wrap(original_journal.content, 75)
+      original_journal.content = CGI.unescape(original_journal.content).gsub(/\n/,"<br>")
       original_journal.content = enquote(original_journal.content)
       @journal.content = "(In reply to Journal Entry # #{original_journal.id})" + original_journal.content
+      #TODO: Fix multiple replies
+      #original_journal.content = original_journal.content + "\n\n" + previous_content
+      @journal.content = "(In reply to Journal # #{original_journal.id})" + original_journal.content
     end
-    
-    render :partial => "new"
+    render :partial => "new", :locals => {:journal => @journal}
   end
   
-   def edit
-    @journal = Journal.find(params[:id])
-    #Remove the br tags so that it can be displayed in a natural fashion
-    @journal.content = CGI.unescape(@journal.content).gsub(/<br>/,"\n")
-    @task = Task.find(params[:task_id])
-    if !can_edit_journal?(@journal)
-      flash[:notice] = 'You are not authorised to edit this journal entry/comment.'
+   def inpage_edit
+   @journal = Journal.find(params[:id])
+   @task = @journal.task
+   if !can_edit_journal?(@journal)
+      flash[:notice] = 'You are not authorised to edit this journal entry'
       redirect_to project_task_journals_path(@task.project, @task)
-    end
-  end
+   end
+   @journal.content = CGI.unescape(@journal.content).gsub(/<br>/,"\n")
+   render :partial => "edit"
+   end
   
   def update
     journal = Journal.find(params[:id])
@@ -92,6 +96,8 @@ class JournalsController < ApplicationController
   
   def index
     @task = Task.find(params[:task_id])
+    @form_journal = Journal.new
+    @form_journal.task = @task
     if can_see_journal?(@task)
       @journals = @task.journals
     else

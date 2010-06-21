@@ -45,20 +45,21 @@
                   = journal.id
         %tr
           %td
-            = journal.content
-            %br
+            = display_message_content(journal.content)
             %small
               - if can_edit_journal?(journal)
-                = link_to 'Edit', edit_project_task_journal_path(@task.project, @task, journal)
+                = link_to_remote 'Edit', :update => "journal_space#{journal.id}", :url => {:action => 'inpage_edit', :id => journal.id}
                 &nbsp;|&nbsp;
               - if can_delete_journal?(journal)
                 = link_to 'Delete', project_task_journal_path(@task.project, @task, journal), :confirm => 'Are you sure?', :method => :delete
                 &nbsp;|&nbsp;
-                = link_to_remote 'Reply', :update => "journal_space#{journal.id}", :url => {:action => 'inpage_new', :project_id => @task.project.id, :task_id => @task.id, :reply_to_id => journal.id}
+                = link_to_remote 'Reply', :update => "journal_space", :url => {:action => 'inpage_new', :project_id => @task.project.id, :task_id => @task.id, :reply_to_id => journal.id}
                 %div{:id => "journal_space#{journal.id}"}
           
   %div{:id => 'journal_space'}
-  
+    - if can_add_journal_entry?(@task)
+      -# @form_journal.task.id
+      = render :partial => "new", :locals => { :journal => @form_journal }
   %p.links
     - if can_add_journal_entry?(@task)
       = link_to_remote 'New Entry',  :update => 'journal_space', :url => {:action => 'inpage_new', :project_id => @task.project.id, :task_id => @task.id}
