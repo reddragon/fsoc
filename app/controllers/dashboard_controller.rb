@@ -19,5 +19,20 @@ class DashboardController < ApplicationController
 
   def index
   end
+  
+  def dashboard_links
+    partial = params[:partial]
+    if partial == "dashboard"
+      render :partial => "dashboard/dashboard", :locals => {:user => current_user}
+    else
+      render :partial => "dashboard/" + partial
+    end
+  end
+  
+  def set_timeframes
+    APP_CONFIG['pct_from'] = Date::civil(params[:pct_from][:year].to_i, params[:pct_from][:month].to_i, params[:pct_from][:day].to_i)
+    APP_CONFIG['pct_to'] = Date::civil(params[:pct_to][:year].to_i, params[:pct_to][:month].to_i, params[:pct_to][:day].to_i)
+    redirect_to :controller => "dashboard", :action => "dashboard_links", :partial => "configure"
+  end
 
 end

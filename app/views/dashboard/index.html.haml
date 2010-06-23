@@ -15,6 +15,8 @@
 -#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -#++
 
+= javascript_include_tag :defaults
+ 
 .post
   %h2.title
     - if !logged_in?
@@ -26,6 +28,7 @@
     %span.date &nbsp;
   %div{:style => 'clear: both'} &nbsp;
   .entry
+        
     - if !logged_in?
       %h3 Hi and welcome to FSoC
       %p.links
@@ -34,8 +37,14 @@
         = link_to 'Signup', signup_path
         to get started.
     - else
-      - if admin?
-        %br/
-        %p /* under construction */
-      = render :partial => "dashboard/dashboard", :locals => { :user => current_user }
+      %br/
+      %div{:id => 'dashboard_content'}
+        = render :partial => "dashboard/dashboard", :locals => { :user => current_user }
+      %p.links
+        = link_to_remote 'My Projects and Proposals', :update => "dashboard_content", :url => {:action => "dashboard_links", :partial => 'dashboard' } 
+        - if admin?
+          &nbsp;|&nbsp;
+          = link_to_remote 'Configure', :update => "dashboard_content", :url => {:action => "dashboard_links", :partial => 'configure' } 
+        
+      
 
