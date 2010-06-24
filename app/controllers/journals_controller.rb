@@ -16,7 +16,7 @@ class JournalsController < ApplicationController
     if params[:reply_to_id] != nil
       original_journal = Journal.find(params[:reply_to_id])
       original_journal.content = wrap(original_journal.content, 75)
-      original_journal.content = CGI.unescape(original_journal.content).gsub(/\n/,"<br>")
+      original_journal.content = CGI.unescape(original_journal.content).gsub(/\n/,"<br \/>")
       original_journal.content = enquote(original_journal.content)
       @journal.content = "(In reply to Journal Entry # #{original_journal.id})" + original_journal.content
       original_journal.content = original_journal.content + "\n\n" + previous_content
@@ -32,7 +32,7 @@ class JournalsController < ApplicationController
       flash[:notice] = 'You are not authorised to edit this journal entry'
       redirect_to project_task_journals_path(@task.project, @task)
    end
-   @journal.content = CGI.unescape(@journal.content).gsub(/<br>/,"\n")
+   @journal.content = CGI.unescape(@journal.content).gsub(/<br \/>/,"\n")
    render :partial => "edit"
    end
   
@@ -45,7 +45,7 @@ class JournalsController < ApplicationController
     else
       #Convert endlines to <br/>
       journal_content = params[:journal][:content]
-      journal_content = CGI.unescape(journal_content).gsub(/\n/,"<br>")
+      journal_content = CGI.unescape(journal_content).gsub(/\n/,"<br \/>")
       #TODO: Santize tags here, excluding the br tag
       if journal.update_attributes(:content => journal_content)
         flash[:notice] = 'Journal successfully updated.'
@@ -70,7 +70,7 @@ class JournalsController < ApplicationController
     
     original_content = journal.content
     #Convert endlines to <br/>
-    journal.content = CGI.unescape(journal.content).gsub(/\n/,"<br>")
+    journal.content = CGI.unescape(journal.content).gsub(/\n/,"<br \/>")
     #TODO: Santize tags here, excluding the br tag
     if journal.save
       #Send mail when an entry is created

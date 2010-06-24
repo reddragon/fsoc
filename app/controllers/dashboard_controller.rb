@@ -30,9 +30,44 @@ class DashboardController < ApplicationController
   end
   
   def set_timeframes
-    APP_CONFIG['pct_from'] = Date::civil(params[:pct_from][:year].to_i, params[:pct_from][:month].to_i, params[:pct_from][:day].to_i)
-    APP_CONFIG['pct_to'] = Date::civil(params[:pct_to][:year].to_i, params[:pct_to][:month].to_i, params[:pct_to][:day].to_i)
-    redirect_to :controller => "dashboard", :action => "dashboard_links", :partial => "configure"
+    date_params = [ "pct_from", "pct_to", "pst_from", "pst_to", "pat_from", "pat_to", "csd_on", "met_from", "met_to", "ced_on", "fet_from", "fet_to" ]
+    
+    date_params.each do |dp|
+      APP_CONFIG[dp] = Date::civil(params[dp.intern][:year].to_i, params[dp.intern][:month].to_i, params[dp.intern][:day].to_i)
+      puts APP_CONFIG[dp]
+    end
+    
+    redirect_to :action => "configure"
+  end
+  
+  def configure
+    if !can_configure?
+      flash[:notice] = 'You are not authorized to perform this operation'
+      redirect_to :controller => "dashboard"
+    end
+  end
+  
+  def task_status
+    if !logged_in?
+      flash[:notice] = 'Please login to access this functionality'
+      redirect_to :controller => "dashboard"
+    else
+      if mentor?(current_user) || admin?(current_user)
+        #Is the set of projects which are being mentored, may have been proposed too
+        @projects_mentoring = current_user.project_mentorships
+        #Union of the proposed and mentored projects
+        @projects = (current_user.project_proposals + @projects_mentoring).uniq
+        #Is the set of projects which have only been proposed by the user, not mentored
+        @projects_only_proposed = @projects - current_user.project_mentorships
+      else 
+        if student?(current_user)
+          @projects = current_user.project
+        end
+      end    
+    end
+  end
+  
+  def proposals
   end
 
 end

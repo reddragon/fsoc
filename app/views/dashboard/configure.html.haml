@@ -1,0 +1,139 @@
+-#--
+-#   Copyright (C) 2010 Gaurav Menghani <gaurav.menghani@gmail.com>
+-#
+-#   This program is free software: you can redistribute it and/or modify
+-#   it under the terms of the GNU Affero General Public License as published by
+-#   the Free Software Foundation, either version 3 of the License, or
+-#   (at your option) any later version.
+-#
+-#   This program is distributed in the hope that it will be useful,
+-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-#   GNU Affero General Public License for more details.
+-#
+-#   You should have received a copy of the GNU Affero General Public License
+-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-#++
+
+.post
+  %h2.title
+    Configure
+  %p.meta
+    %span.date &nbsp;
+  %div{:style => 'clear: both'} &nbsp;
+  .entry
+
+%h3
+  FSoC is currently in
+  = APP_CONFIG['fsocmode']
+  mode
+  %br
+%br
+%br
+  - if APP_CONFIG['fsocmode'] == "Summer Coding"
+    - form_tag :action => "set_timeframes" do
+      %h3
+        Project Creation Timeframe
+      %table{:id => 'hor-minimalist-a'}
+        %tr
+          %th
+            From  
+          %th
+            To
+        %tr
+          %td
+            = select_date Date.today, :prefix => "pct_from"
+          %td
+            = select_date Date.today, :prefix => "pct_to"            
+      %br
+      %h3
+        Proposal Submission Timeframe
+      %table{:id => 'hor-minimalist-a'}
+        %tr
+          %th
+            From  
+          %th
+            To
+        %tr
+          %td
+            = select_date Date.today, :prefix => "pst_from"
+          %td
+            = select_date Date.today, :prefix => "pst_to" 
+      
+      %br
+      %h3
+        Proposal Acceptance Timeframe
+      %table{:id => 'hor-minimalist-a'}
+        %tr
+          %th
+            From  
+          %th
+            To
+        %tr
+          %td
+            = select_date Date.today, :prefix => "pat_from"
+          %td
+            = select_date Date.today, :prefix => "pat_to" 
+      %br
+      
+      %h3
+        Coding Starts Date
+      %table{:id => 'hor-minimalist-a'}
+        %tr
+          %th
+            On  
+        %tr
+          %td
+            = select_date Date.today, :prefix => "csd_on"
+      
+      %br
+      %h3
+        Mid-Term Evaluation Timeframe
+      %table{:id => 'hor-minimalist-a'}
+        %tr
+          %th
+            From  
+          %th
+            To
+        %tr
+          %td
+            = select_date Date.today, :prefix => "met_from"
+          %td
+            = select_date Date.today, :prefix => "met_to" 
+      
+      %br
+      %h3
+        Coding Ends Date
+      %table{:id => 'hor-minimalist-a'}
+        %tr
+          %th
+            On
+        %tr
+          %td
+            = select_date Date.today, :prefix => "ced_on"
+      %br
+      %h3
+        Final Evaluation Timeframe
+      %table{:id => 'hor-minimalist-a'}
+        %tr
+          %th
+            From  
+          %th
+            To
+        %tr
+          %td
+            = select_date Date.today, :prefix => "fet_from"
+          %td
+            = select_date Date.today, :prefix => "fet_to" 
+      %br
+      = submit_tag  'Set Timeframes' 
+      
+%p.links
+  = link_to 'My Projects', :controller => "dashboard"
+  &nbsp;|&nbsp;
+  = link_to 'My Proposals', :controller => "dashboard", :action => "proposals"
+  &nbsp;|&nbsp;
+  = link_to 'Task Status', :controller => "dashboard", :action => "task_status"
+  - if admin?
+    &nbsp;|&nbsp;
+    = link_to 'Configure', :controller => "dashboard", :action => "configure"

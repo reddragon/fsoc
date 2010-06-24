@@ -15,7 +15,6 @@
 -#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -#++
 
-= javascript_include_tag :defaults
  
 .post
   %h2.title
@@ -37,14 +36,70 @@
         = link_to 'Signup', signup_path
         to get started.
     - else
-      %br/
       %div{:id => 'dashboard_content'}
-        = render :partial => "dashboard/dashboard", :locals => { :user => current_user }
+        - if mentor?(current_user) || admin?
+          - if !current_user.project_mentorships.empty?
+            %h3
+              Projects mentored by
+              =h current_user.login
+            
+            %table{:id => "hor-minimalist-a"}
+              %tr
+                %th
+                  Name
+                %th
+                  Proposed by
+              - current_user.project_mentorships.each do |project|      
+                %tr
+                  %td
+                    = link_to project.name, project
+                  %td
+                    = link_to_user project.proposer
+                  %td
+                    - if can_edit_project?(project)
+                      = link_to 'Edit', edit_project_path(project)
+                    = ' | ' if can_edit_project?(project) && can_delete_project?(project)
+                    - if can_delete_project?(project)
+                      = link_to 'Delete', project, :confirm => 'Are you sure?', :method => :delete
+          - else
+            %h3
+              Not mentoring any projects.            
+        
+        - if student?(current_user)
+          %br
+          - if current_user.project
+            %h3 
+              =h current_user.login
+              is student for the project
+            %table{:id => "hor-minimalist-a"}
+              %tr
+                %th
+                  Name
+                %th
+                  Mentor
+              %tr
+                %td
+                  = link_to current_user.project.name, current_user.project
+                %td  
+                  = current_user.project.mentor ? link_to_user(current_user.project.mentor): "Nobody"        
+                %td
+                  - if can_edit_project?(current_user.project)
+                    = link_to 'Edit', edit_project_path(current_user.project)
+                  = ' | ' if can_edit_project?(current_user.project) && can_delete_project?(current_user.project)
+                  - if can_delete_project?(current_user.project)
+                    = link_to 'Delete', current_user.project, :confirm => 'Are you sure?', :method => :delete  
+                               
+          - else
+            %h3
+              Not a student for any projects                  
       %p.links
-        = link_to_remote 'My Projects and Proposals', :update => "dashboard_content", :url => {:action => "dashboard_links", :partial => 'dashboard' } 
+        = link_to 'My Projects', :controller => "dashboard"
+        &nbsp;|&nbsp;
+        = link_to 'My Proposals', :controller => "dashboard", :action => "proposals"
+        &nbsp;|&nbsp;
+        = link_to 'Project Task Status', :controller => "dashboard", :action => "task_status"
         - if admin?
           &nbsp;|&nbsp;
-          = link_to_remote 'Configure', :update => "dashboard_content", :url => {:action => "dashboard_links", :partial => 'configure' } 
-        
+          = link_to 'Configure', :controller => "dashboard", :action => "configure"
       
 

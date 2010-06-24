@@ -116,35 +116,40 @@ module AccessControl
       student? && current_user == task.student
     end
 		
-	#comment specific
-	def can_delete_comment?(comment)
+    #comment specific
+    def can_delete_comment?(comment)
       comment.user == current_user || admin?
     end
 	
     def can_edit_comment?(comment)
-	  comment.user == current_user
+      comment.user == current_user
     end
 	
-	#Journal specific
-	def can_see_journal?(task)
-	  (current_user == task.student) || (task.project.mentor == current_user) || admin?
-	end
+    #Journal specific
+    def can_see_journal?(task)
+      (current_user == task.student) || (task.project.mentor == current_user) || admin?
+    end
 	
-	def can_add_journal_entry?(task)
-	  can_see_journal?(task)
-	end
+    def can_add_journal_entry?(task)
+     can_see_journal?(task)
+    end
 	
-	def can_add_journal_comment?(task)
-	  can_see_journal?(task)
-	end
+    def can_add_journal_comment?(task)
+      can_see_journal?(task)
+    end
 	
-	def can_edit_journal?(journal)
-	  journal.user == current_user
-	end
+    def can_edit_journal?(journal)
+      journal.user == current_user
+    end
 	
-	def can_delete_journal?(journal)
-	  can_edit_journal?(journal) || (journal.task.project.mentor == current_user) || admin?
-	end
+    def can_delete_journal?(journal)
+      can_edit_journal?(journal) || (journal.task.project.mentor == current_user) || admin?
+    end
+    
+    #Dashboard specific
+    def can_configure?(user = current_user)
+      admin?
+    end
 	
     #Make available as ActionView helper methods.
     def self.included(base)
@@ -159,6 +164,7 @@ module AccessControl
         base.send :helper_method, :student_for_task?, :can_signoff_task?, \
 		  :can_see_journal?, :can_add_journal_entry?, \
 		  :can_add_journal_comment?, :can_edit_journal?, :can_delete_journal?
+	base.send :helper_method, :can_configure?
       end
     end  
 end

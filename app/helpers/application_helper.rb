@@ -65,7 +65,7 @@ module ApplicationHelper
   end
   
   def enquote(str)
-    lines = str.split(/<br>/)
+    lines = str.split(/<br \/>/)
     res = ""
     lines.each do |line|
       res = res + "\n> " + line
@@ -79,15 +79,33 @@ module ApplicationHelper
   end
   
   def display_message_content(txt)
-    lines = txt.split(/<br>/)
+    lines = txt.split(/<br \/>/)
     res = ""
     lines.each do |line|
       if line[0] == 62
-        res = res + "<font color = 'blue'>" + line + "</font>" + '<br>'
+        res = res + "<font color = 'blue'>" + line + "</font>" + '<br />'
       else
-        res = res + line + '<br>'
+        res = res + line + '<br />'
       end 
     end
     res
   end
+  
+  def colored_task_status(task)
+    color_map = { "new" => "gray", "open" => "orange", "resolved" => "green" }
+    if task.due_date != nil
+      color = color_map[task.status]
+      if task.status != "resolved" && task.due_date < Date.today
+        color = "red"
+      end
+      status = task.status
+    else
+      color = "black"
+      status = "Unallocated"  
+    end
+    
+    
+    res = "<font color = '#{color}'>" + status.humanize + "</font>"
+  end
+  
 end

@@ -34,7 +34,7 @@ class CommentsController < ApplicationController
     if params[:reply_to_id] != nil
       original_comment = Comment.find(params[:reply_to_id])
       original_comment.content = wrap(original_comment.content, 75)
-      original_comment.content = CGI.unescape(original_comment.content).gsub(/\n/,"<br>")
+      original_comment.content = CGI.unescape(original_comment.content).gsub(/\n/,"<br \/>")
       original_comment.content = enquote(original_comment.content)
       #TODO: Fix multiple replies
       original_comment.content = original_comment.content + "\n\n" + previous_content
@@ -50,7 +50,7 @@ class CommentsController < ApplicationController
       redirect_to project_comments_url
       end
     #Remove the br tags so that it can be displayed in a natural fashion
-    @comment.content = CGI.unescape(@comment.content).gsub(/<br>/,"\n")
+    @comment.content = CGI.unescape(@comment.content).gsub(/<br \/>/,"\n")
   end
   
   
@@ -61,7 +61,7 @@ class CommentsController < ApplicationController
       flash[:notice] = 'You are not authorised to edit this comment.'
       redirect_to_project_comments_url
     end
-    @comment.content = CGI.unescape(@comment.content).gsub(/<br>/,"\n")
+    @comment.content = CGI.unescape(@comment.content).gsub(/<br \/>/,"\n")
     @comment.project = project
     render :partial => "edit"
   end
@@ -69,8 +69,8 @@ class CommentsController < ApplicationController
   def update
     comment = Comment.find(params[:id])
     content = params[:comment][:content]
-    content = wrap(content, 75)
-    content = CGI.unescape(content).gsub(/\n/,"<br>")
+    content = wrap(content)
+    content = CGI.unescape(content).gsub(/\n/,"<br \/>")
     if comment.update_attribute(:content, content)
       flash[:notice] = 'Comment was successfully edited.'
       redirect_to project_comments_url
@@ -85,7 +85,7 @@ class CommentsController < ApplicationController
     #Add endlines after every 80 chars
     comment.content = wrap(comment.content)
     #Convert endlines to <br/>
-    comment.content = CGI.unescape(comment.content).gsub(/\n/,"<br>")
+    comment.content = CGI.unescape(comment.content).gsub(/\n/,"<br \/>")
     #TODO: Santize tags here, excluding the br tag
     comment.user = current_user
     if comment.save

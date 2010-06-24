@@ -61,9 +61,6 @@
       -# @form_journal.task.id
       = render :partial => "new", :locals => { :journal => @form_journal }
   %p.links
-    - if can_add_journal_entry?(@task)
-      = link_to_remote 'New Entry',  :update => 'journal_space', :url => {:action => 'inpage_new', :project_id => @task.project.id, :task_id => @task.id}
-      &nbsp;|&nbsp;
     = link_to 'Back to Task', project_task_path(@task.project, @task)
     &nbsp;|&nbsp;
     = link_to 'Back to Project', project_path(@task.project)

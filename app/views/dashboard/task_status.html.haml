@@ -1,0 +1,127 @@
+-#--
+-#   Copyright (C) 2010 Gaurav Menghani <gaurav.menghani@gmail.com>
+-#
+-#   This program is free software: you can redistribute it and/or modify
+-#   it under the terms of the GNU Affero General Public License as published by
+-#   the Free Software Foundation, either version 3 of the License, or
+-#   (at your option) any later version.
+-#
+-#   This program is distributed in the hope that it will be useful,
+-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-#   GNU Affero General Public License for more details.
+-#
+-#   You should have received a copy of the GNU Affero General Public License
+-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-#++
+
+ 
+.post
+  %h2.title
+    Task Status
+  %p.meta
+    %span.date &nbsp;
+  %div{:style => 'clear: both'} &nbsp;
+  .entry
+    - if @projects == nil
+      %b
+        - if mentor?(current_user)
+          %h3
+            You are not mentoring any projects yet.
+        - if student?(current_user)
+          %h3
+            You do not have an accepted proposal to a project.
+    - else
+      - if student?(current_user)
+        %h3
+          = @projects.name
+          %table{:id => 'hor-minimalist-a'}
+            %tr
+              %th
+                Task Name  
+              %th
+                Due-Date
+              %th
+                Status
+            - current_user.tasks.each do |task|
+              %tr
+                %td
+                  = link_to task.title, project_task_path(task.project, task)
+                %td
+                  = task.due_date
+                %td
+                  = colored_task_status(task)
+      - else
+        - if !@projects_mentoring.empty?
+          - @projects_mentoring.each do |project|
+            %h3
+              = project.name
+              &nbsp;(Mentor)
+              %table{:id => 'hor-minimalist-a'}
+                %tr
+                  %th
+                    Task Name
+                  %th
+                    Student
+                  %th
+                    Due-Date
+                  %th
+                    Status
+                    
+                - project.tasks.each do |task|
+                  %tr
+                    %td
+                      = link_to task.title, project_task_path(task.project, task)
+                    %td
+                      - if task.due_date == nil
+                        -
+                      - else
+                        = link_to_user task.student
+                    %td
+                      = task.due_date
+                    %td
+                      = colored_task_status(task)                           
+              %br                
+        
+        - if !@projects_only_proposed.empty?
+          - @projects_only_proposed.each do |project|
+            %h3
+              = project.name
+              &nbsp;(Proposer)
+              %table{:id => 'hor-minimalist-a'}
+                %tr
+                  %th
+                    Task Name
+                  %th
+                    Student
+                  %th
+                    Due-Date
+                  %th
+                    Status
+                    
+                - project.tasks.each do |task|
+                  %tr
+                    %td
+                      = link_to task.title, project_task_path(task.project, task)
+                    %td
+                      - if task.due_date == nil
+                        -
+                      - else
+                        = link_to_user task.student
+                    %td
+                      = task.due_date
+                    %td
+                      = colored_task_status(task)                           
+              %br
+          
+    %br      
+      
+    %p.links
+      = link_to 'My Projects', :controller => "dashboard"
+      &nbsp;|&nbsp;
+      = link_to 'My Proposals', :controller => "dashboard", :action => "proposals"
+      &nbsp;|&nbsp;
+      = link_to 'Project Task Status', :controller => "dashboard", :action => "task_status"
+      - if admin?
+        &nbsp;|&nbsp;
+        = link_to 'Configure', :controller => "dashboard", :action => "configure"
