@@ -33,10 +33,35 @@ class DashboardController < ApplicationController
     date_params = [ "pct_from", "pct_to", "pst_from", "pst_to", "pat_from", "pat_to", "csd_on", "met_from", "met_to", "ced_on", "fet_from", "fet_to" ]
     
     date_params.each do |dp|
-      APP_CONFIG[dp] = Date::civil(params[dp.intern][:year].to_i, params[dp.intern][:month].to_i, params[dp.intern][:day].to_i)
+      APP_CONFIG[dp] = DateTime::civil(params[dp.intern][:year].to_i, params[dp.intern][:month].to_i, params[dp.intern][:day].to_i, 0, 0, 0)
       puts APP_CONFIG[dp]
     end
     
+    #Set Calendar
+    calendar_events = [ \
+    { :name => "Project Creation Timeframe", :dates => ["pct_from", "pct_to"] },\
+    { :name => "Proposal Submission Timeframe", :dates => ["pst_from", "pst_to"] },\
+    { :name => "Project Application Timeframe", :dates => ["pat_from", "pat_to"] },\
+    { :name => "Coding Starts", :dates => ["csd_on", "csd_on"] },\
+    { :name => "Mid-Term Evaluation Timeframe", :dates => ["met_from", "met_to"] },\
+    { :name =>"Coding Ends", :dates => ["ced_on", "ced_on"] },\
+    { :name => "Final Evaluation Timeframe", :dates => ["fet_from", "fet_to"] } ]
+    
+    calendar_events.each do |e|
+      existing_event = Event.find(:first, :conditions => {:name => e[:name] })
+      if existing_event
+        existing_event.destroy
+      end
+        new_event = Event.new
+        new_event.name = e[:name]
+        new_event.start_at = APP_CONFIG[e[:dates][0]]
+        new_event.end_at = APP_CONFIG[e[:dates][1]]
+        if !new_event.save
+          flash[:notice] = "Could not set timeframes."
+          redirect_to :action => "configure"
+        end
+    end
+    flash[:notice] = "Timeframes successfully set."
     redirect_to :action => "configure"
   end
   

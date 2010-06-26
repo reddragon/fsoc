@@ -16,6 +16,7 @@
 #++
 
 ActionController::Routing::Routes.draw do |map|
+  map.calendar '/calendar/:year/:month', :controller => 'calendar', :action => 'index', :year => Time.zone.now.year, :month => Time.zone.now.month
   
 
   map.logout '/logout', :controller => 'sessions', :action => 'destroy'

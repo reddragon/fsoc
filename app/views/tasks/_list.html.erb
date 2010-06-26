@@ -43,7 +43,7 @@
           </td>
           <td>
             <% if task.student %>           
-              <%=h task.status.humanize %>
+              <%= colored_task_status(task) %>
             <% else %>
               -
             <% end %>    

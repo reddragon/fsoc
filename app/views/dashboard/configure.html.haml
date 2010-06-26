@@ -42,9 +42,9 @@
             To
         %tr
           %td
-            = select_date Date.today, :prefix => "pct_from"
+            = select_date APP_CONFIG["pct_from"], :prefix => "pct_from"
           %td
-            = select_date Date.today, :prefix => "pct_to"            
+            = select_date APP_CONFIG["pct_to"], :prefix => "pct_to"         
       %br
       %h3
         Proposal Submission Timeframe
@@ -56,9 +56,9 @@
             To
         %tr
           %td
-            = select_date Date.today, :prefix => "pst_from"
+            = select_date APP_CONFIG["pst_from"], :prefix => "pst_from"
           %td
-            = select_date Date.today, :prefix => "pst_to" 
+            = select_date APP_CONFIG["pst_to"], :prefix => "pst_to" 
       
       %br
       %h3
@@ -71,9 +71,9 @@
             To
         %tr
           %td
-            = select_date Date.today, :prefix => "pat_from"
+            = select_date APP_CONFIG["pat_from"], :prefix => "pat_from"
           %td
-            = select_date Date.today, :prefix => "pat_to" 
+            = select_date APP_CONFIG["pat_to"], :prefix => "pat_to" 
       %br
       
       %h3
@@ -84,7 +84,7 @@
             On  
         %tr
           %td
-            = select_date Date.today, :prefix => "csd_on"
+            = select_date APP_CONFIG["csd_on"], :prefix => "csd_on"
       
       %br
       %h3
@@ -97,7 +97,7 @@
             To
         %tr
           %td
-            = select_date Date.today, :prefix => "met_from"
+            = select_date APP_CONFIG["met_from"], :prefix => "met_from"
           %td
             = select_date Date.today, :prefix => "met_to" 
       
@@ -110,7 +110,7 @@
             On
         %tr
           %td
-            = select_date Date.today, :prefix => "ced_on"
+            = select_date APP_CONFIG["ced_on"], :prefix => "ced_on"
       %br
       %h3
         Final Evaluation Timeframe
@@ -122,9 +122,9 @@
             To
         %tr
           %td
-            = select_date Date.today, :prefix => "fet_from"
+            = select_date APP_CONFIG["fet_from"], :prefix => "fet_from"
           %td
-            = select_date Date.today, :prefix => "fet_to" 
+            = select_date APP_CONFIG["fet_to"], :prefix => "fet_to" 
       %br
       = submit_tag  'Set Timeframes' 
       
