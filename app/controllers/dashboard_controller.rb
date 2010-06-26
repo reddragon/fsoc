@@ -23,17 +23,20 @@ class DashboardController < ApplicationController
   def dashboard_links
     partial = params[:partial]
     if partial == "dashboard"
-      render :partial => "dashboard/dashboard", :locals => {:user => current_user}
+      render :partial => "dashboard/dashboard",\
+             :locals => {:user => current_user}
     else
       render :partial => "dashboard/" + partial
     end
   end
   
   def set_timeframes
-    date_params = [ "pct_from", "pct_to", "pst_from", "pst_to", "pat_from", "pat_to", "csd_on", "met_from", "met_to", "ced_on", "fet_from", "fet_to" ]
+    date_params = [ "pct_from", "pct_to", "pst_from", "pst_to", "pat_from",\
+     "pat_to", "csd_on", "met_from", "met_to", "ced_on", "fet_from", "fet_to" ]
     
     date_params.each do |dp|
-      APP_CONFIG[dp] = DateTime::civil(params[dp.intern][:year].to_i, params[dp.intern][:month].to_i, params[dp.intern][:day].to_i, 0, 0, 0)
+      APP_CONFIG[dp] = DateTime::civil(params[dp.intern][:year].to_i,\
+       params[dp.intern][:month].to_i, params[dp.intern][:day].to_i, 0, 0, 0)
       puts APP_CONFIG[dp]
     end
     
