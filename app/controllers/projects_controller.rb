@@ -51,11 +51,15 @@ class ProjectsController < ApplicationController
   # GET /projects/new.xml
   def new
     @project = Project.new
-
-    respond_to do |format|
-      format.html # new.html.erb
-      format.xml  { render :xml => @project }
-    end
+    if !can_create_project?
+      flash[:notice] = 'You are not authorised to create a project.'
+      redirect_to projects_url
+    else
+      respond_to do |format|
+        format.html # new.html.erb
+        format.xml  { render :xml => @project }
+      end
+    end  
   end
 
   # GET /projects/1/edit

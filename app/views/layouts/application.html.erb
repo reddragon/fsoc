@@ -85,7 +85,11 @@ Released   : 20090910
 						  <li><%= link_to project.name, project %></li>
 					  <% end %>
 					<% else %>
-					<li>No Projects listed. <%= link_to 'Create', new_project_path %></li>
+					<li>No Projects listed. 
+					<% if can_create_project? %>
+ 					  <%= link_to 'Create', new_project_path %>
+ 					<% end %>
+ 					</li>
 					<% end %>
 					</ul>
 				</li>

@@ -44,7 +44,7 @@ class DashboardController < ApplicationController
     calendar_events = [ \
     { :name => "Project Creation Timeframe", :dates => ["pct_from", "pct_to"] },\
     { :name => "Proposal Submission Timeframe", :dates => ["pst_from", "pst_to"] },\
-    { :name => "Project Application Timeframe", :dates => ["pat_from", "pat_to"] },\
+    { :name => "Proposal Acceptance Timeframe", :dates => ["pat_from", "pat_to"] },\
     { :name => "Coding Starts", :dates => ["csd_on", "csd_on"] },\
     { :name => "Mid-Term Evaluation Timeframe", :dates => ["met_from", "met_to"] },\
     { :name =>"Coding Ends", :dates => ["ced_on", "ced_on"] },\
@@ -64,6 +64,7 @@ class DashboardController < ApplicationController
           redirect_to :action => "configure"
         end
     end
+    APP_CONFIG['timeframesset'] = "true"
     flash[:notice] = "Timeframes successfully set."
     redirect_to :action => "configure"
   end
@@ -73,6 +74,12 @@ class DashboardController < ApplicationController
       flash[:notice] = 'You are not authorized to perform this operation'
       redirect_to :controller => "dashboard"
     end
+    
+    if APP_CONFIG['fsocmode'] == "Summer Coding" and\
+       APP_CONFIG['timeframesset'] == "false"
+      flash[:notice] = 'FSoC is in Summer Coding mode, but Timeframes
+       have not yet been set.'
+    end    
   end
   
   def task_status

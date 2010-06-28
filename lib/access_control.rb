@@ -19,7 +19,9 @@ module AccessControl
   #methods for access control for users, projects etc.
 
   protected
-
+    def within_timeframe?(timeframe)
+      APP_CONFIG['fsocmode'] == "Year Round" || (APP_CONFIG[timeframe + "_from"] <= DateTime.now and DateTime.now <= APP_CONFIG[timeframe + "_to"]) 
+    end
     #user specific
     def mentor?(user = current_user)
       if user == current_user
@@ -42,8 +44,12 @@ module AccessControl
     end 
     
     #project specific
+    def can_create_project?
+      within_timeframe?("pct")
+    end
+    
     def can_edit_project?(project)
-      logged_in? && ((current_user == project.proposer && project.status == 'proposed') || \
+      logged_in? && within_timeframe?("pct") && ((current_user == project.proposer && project.status == 'proposed') || \
         current_user == project.mentor || current_user.user_type == 'admin')
     end
     
@@ -59,7 +65,8 @@ module AccessControl
         proposals = project.proposals.find(:all, \
           :conditions => {:student_id => current_user.id})
       end
-      student? && proposals.empty? && !(current_user.project)
+      within_timeframe?("pst") && student? && proposals.empty? && \
+      !(current_user.project)
     end
     
     def can_view_proposal_list?(project)
@@ -67,8 +74,8 @@ module AccessControl
     end
         
     def can_edit_proposal?(proposal)
-      (student? && proposal.student == current_user && \
-        proposal.status == 'pending') || admin?
+      (within_timeframe?("pst") && student? && proposal.student == current_user\
+       && proposal.status == 'pending') || admin?
     end
 
     def can_view_proposal?(proposal)
@@ -81,7 +88,8 @@ module AccessControl
     end
     
     def can_accept_proposal?(proposal)
-      mentor? && proposal.project.mentor == current_user && \
+      within_timeframe?("pat") && mentor? && \
+        proposal.project.mentor == current_user && \
         !proposal.project.unallocated_tasks.empty? && \
         (proposal.status == 'pending' || proposal.status == 'accepted')
     end
@@ -154,8 +162,9 @@ module AccessControl
     #Make available as ActionView helper methods.
     def self.included(base)
       if base.respond_to? :helper_method
-        base.send :helper_method, :mentor?, :student?, :admin?
-        base.send :helper_method, :can_edit_project?, :can_delete_project?
+        base.send :helper_method, :within_timeframe?, :mentor?, :student?, :admin?
+        base.send :helper_method, :can_create_project?, :can_edit_project?,\
+          :can_delete_project?
         base.send :helper_method, :can_add_proposal?, :can_edit_proposal?, \
           :can_view_proposal_list?, :can_view_user_proposal_list?
         base.send :helper_method, :can_accept_proposal?, :can_signoff_proposal?

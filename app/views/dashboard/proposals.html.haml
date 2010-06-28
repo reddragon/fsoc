@@ -23,9 +23,10 @@
   %div{:style => 'clear: both'} &nbsp;
   .entry
   
-    - if student?(current_user) && can_view_user_proposal_list?(user)
+    - if student?(current_user) && can_view_user_proposal_list?(current_user)
       %br
-        = render :partial => "proposals/list", :locals => { :proposals => user.proposals }	  
+        = render :partial => "proposals/list", :locals => { :proposals => current_user.proposals }	  
+    %br
 
     - if !current_user.project_proposals.empty?
       %h3
@@ -37,6 +38,8 @@
             Name
           %th
             Mentor
+          %th
+            &nbsp;  
         
         - current_user.project_proposals.each do |project|
           %tr
