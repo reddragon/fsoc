@@ -34,10 +34,37 @@ class DashboardController < ApplicationController
     date_params = [ "pct_from", "pct_to", "pst_from", "pst_to", "pat_from",\
      "pat_to", "csd_on", "met_from", "met_to", "ced_on", "fet_from", "fet_to" ]
     
+    app_settings = AppSetting.find(:all)
+    
+    if !app_settings.empty?
+      if !app_settings[0].destroy
+        flash[:notice] = "Could not set timeframes."
+        redirect_to :action => "configure"
+      end
+    end
+    
+    app_setting = AppSetting.new
     date_params.each do |dp|
       APP_CONFIG[dp] = DateTime::civil(params[dp.intern][:year].to_i,\
-       params[dp.intern][:month].to_i, params[dp.intern][:day].to_i, 0, 0, 0)
-      puts APP_CONFIG[dp]
+       params[dp.intern][:month].to_i, params[dp.intern][:day].to_i, 0, 0, 0) 
+    end
+    
+    app_setting.pct_from = APP_CONFIG['pct_from']
+    app_setting.pct_to = APP_CONFIG['pct_to']
+    app_setting.pst_from = APP_CONFIG['pst_from']
+    app_setting.pst_to = APP_CONFIG['pst_to']
+    app_setting.pat_from = APP_CONFIG['pat_from']
+    app_setting.pat_to = APP_CONFIG['pat_to']
+    app_setting.csd_on = APP_CONFIG['csd_on']
+    app_setting.met_from = APP_CONFIG['met_from']
+    app_setting.met_to = APP_CONFIG['met_to']
+    app_setting.ced_on = APP_CONFIG['ced_on']
+    app_setting.fet_from = APP_CONFIG['fet_from']
+    app_setting.fet_to = APP_CONFIG['fet_to']
+    
+    if !app_setting.save
+      flash[:notice] = "Could not set timeframes."
+      redirect_to :action => "configure"
     end
     
     #Set Calendar
@@ -64,7 +91,6 @@ class DashboardController < ApplicationController
           redirect_to :action => "configure"
         end
     end
-    APP_CONFIG['timeframesset'] = "true"
     flash[:notice] = "Timeframes successfully set."
     redirect_to :action => "configure"
   end
@@ -75,10 +101,14 @@ class DashboardController < ApplicationController
       redirect_to :controller => "dashboard"
     end
     
-    if APP_CONFIG['fsocmode'] == "Summer Coding" and\
-       (APP_CONFIG['timeframesset'] == "false" || APP_CONFIG['timeframesset'].nil?)
-      flash[:notice] = 'FSoC is in Summer Coding mode, but Timeframes
-       have not yet been set.'
+    app_settings = AppSetting.find(:all)
+    if APP_CONFIG['fsocmode'] == "Summer Coding"
+      if app_settings.empty?
+        flash[:notice] = 'FSoC is in Summer Coding mode, but Timeframes 
+         have not yet been set.'
+      else
+        app_setting = app_settings[0]
+      end
     end    
   end
   

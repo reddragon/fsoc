@@ -9,17 +9,20 @@ class CalendarController < ApplicationController
   end
   
   def dates
-    @pct_from = (APP_CONFIG['pct_from']).to_formatted_s(:long)
-    @pct_to = (APP_CONFIG['pct_to']).to_formatted_s(:long)
-    @pst_from = (APP_CONFIG['pst_from']).to_formatted_s(:long)
-    @pst_to = (APP_CONFIG['pst_to']).to_formatted_s(:long)
-    @pat_from = (APP_CONFIG['pat_from']).to_formatted_s(:long)
-    @pat_to = (APP_CONFIG['pat_to']).to_formatted_s(:long)
-    @csd_on = (APP_CONFIG['csd_on']).to_formatted_s(:long)
-    @met_from = (APP_CONFIG['met_from']).to_formatted_s(:long)
-    @met_to = (APP_CONFIG['met_to']).to_formatted_s(:long)
-    @ced_on = (APP_CONFIG['ced_on']).to_formatted_s(:long)
-    @fet_from = (APP_CONFIG['fet_from']).to_formatted_s(:long)
-    @fet_to = (APP_CONFIG['fet_to']).to_formatted_s(:long)
+    @mode = APP_CONFIG['fsocmode']
+    if @mode == "Summer Coding"
+      @pct_from = (APP_CONFIG['pct_from']).to_formatted_s(:long)
+      @pct_to = (APP_CONFIG['pct_to']).to_formatted_s(:long)
+      @pst_from = (APP_CONFIG['pst_from']).to_formatted_s(:long)
+      @pst_to = (APP_CONFIG['pst_to']).to_formatted_s(:long)
+      @pat_from = (APP_CONFIG['pat_from']).to_formatted_s(:long)
+      @pat_to = (APP_CONFIG['pat_to']).to_formatted_s(:long)
+      @csd_on = (APP_CONFIG['csd_on']).to_formatted_s(:long)
+      @met_from = (APP_CONFIG['met_from']).to_formatted_s(:long)
+      @met_to = (APP_CONFIG['met_to']).to_formatted_s(:long)
+      @ced_on = (APP_CONFIG['ced_on']).to_formatted_s(:long)
+      @fet_from = (APP_CONFIG['fet_from']).to_formatted_s(:long)
+      @fet_to = (APP_CONFIG['fet_to']).to_formatted_s(:long)
+    end
   end
 end

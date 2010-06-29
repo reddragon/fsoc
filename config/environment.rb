@@ -62,5 +62,7 @@ Rails::Initializer.run do |config|
     :user_name      => "fsocmailer@gmail.com",
     :password       => "password"
   }
-
+  
 end
+
+

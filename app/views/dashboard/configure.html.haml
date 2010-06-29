@@ -99,7 +99,7 @@
           %td
             = select_date APP_CONFIG["met_from"], :prefix => "met_from"
           %td
-            = select_date Date.today, :prefix => "met_to" 
+            = select_date APP_CONFIG["met_to"], :prefix => "met_to" 
       
       %br
       %h3
