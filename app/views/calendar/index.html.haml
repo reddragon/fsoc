@@ -23,5 +23,9 @@
   %p.meta
     %span.date &nbsp;
   %div{:style => 'clear: both;'} &nbsp;
-  .entry
+  .entry 
     = event_calendar
+  
+  %p.links
+    = link_to 'Important Dates', :controller => "calendar", :action => "dates"
+      

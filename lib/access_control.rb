@@ -49,7 +49,8 @@ module AccessControl
     end
     
     def can_edit_project?(project)
-      logged_in? && within_timeframe?("pct") && ((current_user == project.proposer && project.status == 'proposed') || \
+      logged_in? && within_timeframe?("pct") && \
+       ((current_user == project.proposer && project.status == 'proposed') || \
         current_user == project.mentor || current_user.user_type == 'admin')
     end
     
