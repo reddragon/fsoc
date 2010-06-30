@@ -79,10 +79,10 @@ class JournalsController < ApplicationController
       
       #There may not be a student and/or mentor associated with the project yet
       if(journal.task.student != nil)
-        Mail.deliver_message(subject, journal.task.student.email, message)
+        Mail.deliver_message(journal.task.student.email, subject, message)
       end
       if(journal.task.project.mentor != nil)
-        Mail.deliver_message(subject, journal.task.project.mentor.email, message)
+        Mail.deliver_message(journal.task.project.mentor.email, subject, message)
       end
       
       flash[:notice] = 'Journal entry was successfully created.'
