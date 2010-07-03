@@ -139,5 +139,15 @@ class DashboardController < ApplicationController
     @pending_proposals = Proposal.find(:all, \
       :conditions => {:status => "admin_sign_off_pending"})
   end
-
+  
+  def uploadCertificateImg
+    if admin?
+      post = DataFile.save(params[:upload], "public/images/certificate", params[:name])
+      flash[:notice] = 'Image uploaded sucessfully.'
+      redirect_to :controller => "dashboard", :action => "certificates"
+    else
+      flash[:notice] = 'You are not authorized to perform this action.'
+      redirect_to :controller => "dashboard", :action => "certificates"
+    end
+  end
 end

@@ -26,7 +26,29 @@
       Proposals awaiting Admin Sign off
     %br  
     = render :partial => "proposals/list", :locals => {:proposals => @pending_proposals}
-
+    %br
+    %br
+    %h3
+      Upload Certificate Images
+    %small
+      To retain the default certificate layout, make sure the images are in 
+      \.png format.  
+    %br
+    - form_tag ({:action => 'uploadCertificateImg', :name => "complete_logo.png"}, :multipart => true) do
+      %b
+        Program Logo
+      %br  
+      = file_field 'upload', 'datafile'
+      = submit_tag "Upload"
+    %br
+    - form_tag ({:action => 'uploadCertificateImg', :name => "watermark.png"}, :multipart => true) do
+      %b
+        Watermark
+      %br  
+      = file_field 'upload', 'datafile'
+      = submit_tag "Upload"
+    %br  
+    
     %p.links
       = link_to 'My Projects', :controller => "dashboard"
       &nbsp;|&nbsp;
