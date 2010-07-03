@@ -37,6 +37,15 @@
             <% if can_signoff_proposal?(proposal) %>
             	  <%= link_to "Mentor's Sign off", signoff_project_proposal_path(proposal.project, proposal) %>
           	<% end %>
+            <% if can_admin_signoff_proposal?(proposal) %>
+              &nbsp;|&nbsp;
+              <%= link_to "Admin's Sign Off", \
+                admin_signoff_project_proposal_path(proposal.project, proposal) %>
+            <% end %>	
+            <% if can_receive_certificate?(proposal) %>
+              <%= link_to 'Download Certificate', \
+                certificate_project_proposal_path(proposal.project, proposal) + ".pdf" %>
+            <% end %>
           </td>           
         </tr>
       <% end %>

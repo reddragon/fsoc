@@ -59,7 +59,7 @@
               <% end %>
             <% end %>
               <% if can_signoff_task?(task) %>
-                <%= link_to 'Signoff', signoff_project_task_path(project, task) %> |
+                <%= link_to 'Signoff', signoff_project_task_path(project, task) %>
               <% end %>
 
             <% if student_for_task?(task) %>

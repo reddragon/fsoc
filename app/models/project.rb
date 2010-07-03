@@ -23,7 +23,8 @@ class Project < ActiveRecord::Base
   belongs_to :mentor, :class_name => "User", :foreign_key => "mentor_id"
 
   has_many :proposals
-  has_many :accepted_proposals, :class_name => 'Proposal', :conditions => { :status => ['accepted', 'signed_off'] }
+  has_many :accepted_proposals, :class_name => 'Proposal', \
+    :conditions => { :status => ['accepted', 'admin_sign_off_pending', 'signed_off'] }
   has_many :students, :through => :accepted_proposals
   
   has_many :tasks

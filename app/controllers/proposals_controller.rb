@@ -46,7 +46,6 @@ class ProposalsController < ApplicationController
   end
 
   def create
-
     @proposal = Proposal.new(params[:proposal])
     if @proposal.save
       flash[:notice] = 'Your proposal was successfully created.'
@@ -55,7 +54,6 @@ class ProposalsController < ApplicationController
       flash[:notice] = 'Could not create your proposal'    
       render :action => "new"
     end
-  
   end
 
   def update
@@ -141,11 +139,34 @@ class ProposalsController < ApplicationController
   def signoff
     @proposal = Proposal.find(params[:id])  
     if can_signoff_proposal?(@proposal)
-      @proposal.update_attributes(:status => 'signed_off')
+      if APP_CONFIG['fsocmode'] == "Year Round"
+        @proposal.update_attributes(:status => 'signed_off')
+      else
+        @proposal.update_attributes(:status => 'admin_sign_off_pending')
+      end  
       flash[:notice] = 'Successfully signed-off proposal!'
     else
       flash[:notice] = 'Cannot signoff proposal!'  
     end
     redirect_to @proposal.project 
+  end
+  
+  def admin_signoff
+    @proposal = Proposal.find(params[:id])
+    if can_admin_signoff_proposal?(@proposal)
+      @proposal.update_attributes(:status => 'signed_off')
+    end
+    redirect_to @proposal.project
+  end
+  
+  def certificate
+    @proposal = Proposal.find(params[:id])
+    if !can_receive_certificate?(@proposal)
+      flash[:notice] = 'You cannot collect this certificate currently.'
+      redirect_to @proposal.project
+    end
+    respond_to do |format|
+      format.pdf  { render :layout => false }
+    end
   end
 end

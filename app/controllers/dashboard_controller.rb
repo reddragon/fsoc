@@ -134,5 +134,10 @@ class DashboardController < ApplicationController
   
   def proposals
   end
+  
+  def certificates
+    @pending_proposals = Proposal.find(:all, \
+      :conditions => {:status => "admin_sign_off_pending"})
+  end
 
 end

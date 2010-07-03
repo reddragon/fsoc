@@ -100,6 +100,14 @@ module AccessControl
         proposal.status == 'accepted' && proposal.incomplete_tasks.empty?
     end
     
+    def can_admin_signoff_proposal?(proposal)
+      admin? && proposal.status == 'admin_sign_off_pending'
+    end
+    
+    def can_receive_certificate?(proposal)
+      student? && proposal.status == 'signed_off' && current_user == proposal.student
+    end
+    
     #task specific
     def can_add_task?(project)
       can_edit_project?(project)
@@ -170,7 +178,8 @@ module AccessControl
           :can_view_proposal_list?, :can_view_user_proposal_list?
         base.send :helper_method, :can_accept_proposal?, :can_signoff_proposal?
         base.send :helper_method, :can_add_task?, :can_edit_task?, \
-          :can_view_task_list?, :can_delete_comment?, :can_edit_comment?
+          :can_view_task_list?, :can_delete_comment?, :can_edit_comment?, \
+          :can_admin_signoff_proposal?, :can_receive_certificate?
         base.send :helper_method, :student_for_task?, :can_signoff_task?, \
 		  :can_see_journal?, :can_add_journal_entry?, \
 		  :can_add_journal_comment?, :can_edit_journal?, :can_delete_journal?
