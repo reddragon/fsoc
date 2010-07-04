@@ -24,8 +24,14 @@
 	<div class="entry">
 
     <p style="color: red"><%= flash[:error] %></p>
-
     <% form_tag session_path do -%>
+    <% if APP_CONFIG['authviascript'] == true %>
+      <small>Please use your
+        <a href = <%= "#{APP_CONFIG['accountsystemuri']}" %> > 
+          <%= APP_CONFIG['accountsystem'] %> 
+        </a>
+        login which is registered with us.</small>
+    <% end %>
     <p><%= label_tag 'login' %><br />
     <%= text_field_tag 'login', @login %></p>
 

@@ -62,7 +62,12 @@ class User < ActiveRecord::Base
   def self.authenticate(login, password)
     return nil if login.blank? || password.blank?
     u = find_by_login(login.downcase) # need to get the salt
-    u && u.authenticated?(password) ? u : nil
+    if APP_CONFIG['authviascript'] == true
+      response = system("#{APP_CONFIG['scriptcommand']} #{login} #{password}")
+      u && response ? u : nil
+    else
+      u && u.authenticated?(password) ? u : nil
+    end  
   end
 
   def login=(value)

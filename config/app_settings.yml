@@ -1,7 +1,14 @@
-fsocmode: Summer Coding
 programname: Fedora Summer Coding 2010
 adminname: Karsten Wade
 admindesignation: Program Administrator
+
+fsocmode: Summer Coding
+
+authviascript: true
+scriptcommand: ruby lib/checkpassword.rb
+accountsystem: Fedora Account System
+accountsystemuri: https://admin.fedoraproject.org/accounts
+
 timeframesset: false
 pct_from:
 pct_to:
