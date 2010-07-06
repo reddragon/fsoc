@@ -20,8 +20,9 @@ module AccessControl
 
   protected
     def within_timeframe?(timeframe)
-      APP_CONFIG['fsocmode'] == "Year Round" || (APP_CONFIG[timeframe + "_from"] <= DateTime.now and DateTime.now <= APP_CONFIG[timeframe + "_to"]) 
+      APP_CONFIG['fsoc_mode'] == "Year Round" || (APP_CONFIG[timeframe + "_from"] <= DateTime.now and DateTime.now <= APP_CONFIG[timeframe + "_to"]) 
     end
+    
     #user specific
     def mentor?(user = current_user)
       if user == current_user

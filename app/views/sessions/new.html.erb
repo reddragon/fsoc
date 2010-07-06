@@ -25,10 +25,10 @@
 
     <p style="color: red"><%= flash[:error] %></p>
     <% form_tag session_path do -%>
-    <% if APP_CONFIG['authviascript'] == true %>
+    <% if APP_CONFIG['auth_via_script'] == true %>
       <small>Please use your
-        <a href = <%= "#{APP_CONFIG['accountsystemuri']}" %> > 
-          <%= APP_CONFIG['accountsystem'] %> 
+        <a href = <%= "#{APP_CONFIG['account_system_uri']}" %> > 
+          <%= APP_CONFIG['account_system'] %> 
         </a>
         login which is registered with us.</small>
     <% end %>

@@ -39,14 +39,14 @@ require "prawn/core"
     pdf.text "For successfully completing the project\n\
       #{@proposal.project.name}", \
       :align => :center, :size => 20
-    pdf.text "in the #{APP_CONFIG['programname']} program.", \
+    pdf.text "in the #{APP_CONFIG['program_name']} program.", \
       :align => :center, :size => 20
       
     #pdf.move_down 80
     pdf.draw_text "#{@proposal.project.mentor.name}", :size => 15, :at => [20, 20]
-    pdf.draw_text "#{APP_CONFIG['adminname']}", :size => 15, :at => [550,20]
+    pdf.draw_text "#{APP_CONFIG['admin_name']}", :size => 15, :at => [550,20]
     #pdf.move_down 5
     pdf.draw_text "Mentor", :at => [20, 10]
-    pdf.draw_text "#{APP_CONFIG['admindesignation']}", :at => [550, 10] 
+    pdf.draw_text "#{APP_CONFIG['admin_designation']}", :at => [550, 10] 
     
   end

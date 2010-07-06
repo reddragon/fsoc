@@ -24,6 +24,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
   include AuthenticatedSystem
   include AccessControl
+  include ExternalAccountSystem
   
   # Scrub sensitive parameters from your log
   # Filter the password and password_confirmation

@@ -21,6 +21,7 @@ class User < ActiveRecord::Base
   include Authentication
   include Authentication::ByPassword
   include Authentication::ByCookieToken
+  include ExternalAccountSystem
 
   validates_presence_of     :login
   validates_length_of       :login,    :within => 3..40
@@ -62,9 +63,9 @@ class User < ActiveRecord::Base
   def self.authenticate(login, password)
     return nil if login.blank? || password.blank?
     u = find_by_login(login.downcase) # need to get the salt
-    if APP_CONFIG['authviascript'] == true
-      response = system("#{APP_CONFIG['scriptcommand']} #{login} #{password}")
-      u && response ? u : nil
+    if APP_CONFIG['auth_via_script'] == true
+      #response = current_user.login
+      u && u.authenticated_externally?(login, password) ? u : nil
     else
       u && u.authenticated?(password) ? u : nil
     end  

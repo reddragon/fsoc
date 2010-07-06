@@ -102,7 +102,7 @@ class DashboardController < ApplicationController
     end
     
     app_settings = AppSetting.find(:all)
-    if APP_CONFIG['fsocmode'] == "Summer Coding"
+    if APP_CONFIG['fsoc_mode'] == "Summer Coding"
       if app_settings.empty?
         flash[:notice] = 'FSoC is in Summer Coding mode, but Timeframes 
          have not yet been set.'

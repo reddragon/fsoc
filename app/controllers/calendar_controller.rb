@@ -9,7 +9,7 @@ class CalendarController < ApplicationController
   end
   
   def dates
-    @mode = APP_CONFIG['fsocmode']
+    @mode = APP_CONFIG['fsoc_mode']
     if @mode == "Summer Coding"
       @pct_from = (APP_CONFIG['pct_from']).to_formatted_s(:long)
       @pct_to = (APP_CONFIG['pct_to']).to_formatted_s(:long)

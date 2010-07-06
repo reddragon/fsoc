@@ -23,10 +23,10 @@
 	<div style="clear: both;">&nbsp;</div>
 	<div class="entry">
     <% @user.password = @user.password_confirmation = nil %>
-     <% if APP_CONFIG['authviascript'] == true %>
+     <% if APP_CONFIG['auth_via_script'] == true %>
       <small>Please first register with
-        <a href = <%= "#{APP_CONFIG['accountsystemuri']}" %> > 
-          <%= APP_CONFIG['accountsystem'] %> 
+        <a href = <%= "#{APP_CONFIG['account_system_uri']}" %> > 
+          <%= APP_CONFIG['account_system'] %> 
         </a>and use the registered login here.</small>
     <% end %>
     

@@ -139,7 +139,7 @@ class ProposalsController < ApplicationController
   def signoff
     @proposal = Proposal.find(params[:id])  
     if can_signoff_proposal?(@proposal)
-      if APP_CONFIG['fsocmode'] == "Year Round"
+      if APP_CONFIG['fsoc_mode'] == "Year Round"
         @proposal.update_attributes(:status => 'signed_off')
       else
         @proposal.update_attributes(:status => 'admin_sign_off_pending')
