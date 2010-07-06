@@ -45,8 +45,10 @@ class DashboardController < ApplicationController
     
     app_setting = AppSetting.new
     date_params.each do |dp|
-      APP_CONFIG[dp] = DateTime::civil(params[dp.intern][:year].to_i,\
-       params[dp.intern][:month].to_i, params[dp.intern][:day].to_i, 0, 0, 0) 
+      date_array = params[dp.intern][0].split("-")
+      APP_CONFIG[dp] = DateTime::civil(date_array[0].to_i,\
+       date_array[1].to_i, date_array[2].to_i, 0, 0, 0) 
+      puts APP_CONFIG[dp] 
     end
     
     app_setting.pct_from = APP_CONFIG['pct_from']

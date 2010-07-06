@@ -29,6 +29,7 @@
   mode
   %br
 %br
+
 %br
   - if APP_CONFIG['fsoc_mode'] == "Summer Coding"
     - form_tag :action => "set_timeframes" do
@@ -42,9 +43,9 @@
             To
         %tr
           %td
-            = select_date APP_CONFIG["pct_from"], :prefix => "pct_from"
+            = text_field "pct_from", "", :value => APP_CONFIG["pct_from"].to_date
           %td
-            = select_date APP_CONFIG["pct_to"], :prefix => "pct_to"         
+            = text_field "pct_to", "", :value => APP_CONFIG["pct_to"].to_date      
       %br
       %h3
         Proposal Submission Timeframe
@@ -56,9 +57,9 @@
             To
         %tr
           %td
-            = select_date APP_CONFIG["pst_from"], :prefix => "pst_from"
+            = text_field "pst_from", "", :value => APP_CONFIG["pst_from"].to_date
           %td
-            = select_date APP_CONFIG["pst_to"], :prefix => "pst_to" 
+            = text_field "pst_to", "", :value => APP_CONFIG["pst_to"].to_date 
       
       %br
       %h3
@@ -71,9 +72,9 @@
             To
         %tr
           %td
-            = select_date APP_CONFIG["pat_from"], :prefix => "pat_from"
+            = text_field "pat_from", "", :value => APP_CONFIG["pat_from"].to_date
           %td
-            = select_date APP_CONFIG["pat_to"], :prefix => "pat_to" 
+            = text_field "pat_to", "", :value => APP_CONFIG["pat_to"].to_date
       %br
       
       %h3
@@ -84,7 +85,7 @@
             On  
         %tr
           %td
-            = select_date APP_CONFIG["csd_on"], :prefix => "csd_on"
+            = text_field "csd_on", "", :value => APP_CONFIG["csd_on"].to_date
       
       %br
       %h3
@@ -97,9 +98,9 @@
             To
         %tr
           %td
-            = select_date APP_CONFIG["met_from"], :prefix => "met_from"
+            = text_field "met_from", "", :value => APP_CONFIG["met_from"].to_date
           %td
-            = select_date APP_CONFIG["met_to"], :prefix => "met_to" 
+            = text_field "met_to", "", :value => APP_CONFIG["met_to"].to_date 
       
       %br
       %h3
@@ -110,7 +111,7 @@
             On
         %tr
           %td
-            = select_date APP_CONFIG["ced_on"], :prefix => "ced_on"
+            = text_field "ced_on", "", :value => APP_CONFIG["ced_on"].to_date
       %br
       %h3
         Final Evaluation Timeframe
@@ -122,9 +123,9 @@
             To
         %tr
           %td
-            = select_date APP_CONFIG["fet_from"], :prefix => "fet_from"
+            = text_field "fet_from", "", :value => APP_CONFIG["fet_from"].to_date
           %td
-            = select_date APP_CONFIG["fet_to"], :prefix => "fet_to" 
+            = text_field "fet_to", "", :value => APP_CONFIG["fet_to"].to_date 
       %br
       = submit_tag  'Set Timeframes' 
       
