@@ -8,15 +8,4 @@ auth_via_script: true
 account_system: Fedora Account System
 account_system_uri: https://admin.fedoraproject.org/accounts
 
-pct_from:
-pct_to:
-pst_from:
-pst_to:
-pat_from:
-pat_to:
-csd_on:
-met_from:
-met_to:
-ced_on:
-fet_from:
-fet_to:
+

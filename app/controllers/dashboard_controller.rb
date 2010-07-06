@@ -46,9 +46,43 @@ class DashboardController < ApplicationController
     app_setting = AppSetting.new
     date_params.each do |dp|
       date_array = params[dp.intern][0].split("-")
+      if date_array.length != 3
+        flash[:notice] = "Invalid date input."
+        redirect_to :action => "configure", :validation_error => "true"
+        return
+      end
       APP_CONFIG[dp] = DateTime::civil(date_array[0].to_i,\
        date_array[1].to_i, date_array[2].to_i, 0, 0, 0) 
-      puts APP_CONFIG[dp] 
+    end
+    
+    #Set Calendar
+    calendar_events = [ \
+    { :name => "Project Creation Timeframe", :dates => ["pct_from", "pct_to"] },\
+    { :name => "Proposal Submission Timeframe", :dates => ["pst_from", "pst_to"] },\
+    { :name => "Proposal Acceptance Timeframe", :dates => ["pat_from", "pat_to"] },\
+    { :name => "Coding Starts", :dates => ["csd_on", "csd_on"] },\
+    { :name => "Mid-Term Evaluation Timeframe", :dates => ["met_from", "met_to"] },\
+    { :name =>"Coding Ends", :dates => ["ced_on", "ced_on"] },\
+    { :name => "Final Evaluation Timeframe", :dates => ["fet_from", "fet_to"] } ]
+    
+    calendar_events.each do |e|
+      if APP_CONFIG[e[:dates][0]] > APP_CONFIG[e[:dates][1]]
+        flash[:notice] = "#{e[:name]} starting date is after ending date."
+        redirect_to :action => "configure", :validation_error => "true"
+        return
+      end
+      
+      calendar_events.each do |f|
+        if f == e
+          break
+        else
+          if APP_CONFIG[e[:dates][0]] < APP_CONFIG[f[:dates][0]] 
+            flash[:notice] = "#{e[:name]} should not be before #{f[:name]}"
+            redirect_to :action => "configure", :validation_error => "true"
+            return
+          end  
+        end
+      end
     end
     
     app_setting.pct_from = APP_CONFIG['pct_from']
@@ -69,16 +103,6 @@ class DashboardController < ApplicationController
       redirect_to :action => "configure"
     end
     
-    #Set Calendar
-    calendar_events = [ \
-    { :name => "Project Creation Timeframe", :dates => ["pct_from", "pct_to"] },\
-    { :name => "Proposal Submission Timeframe", :dates => ["pst_from", "pst_to"] },\
-    { :name => "Proposal Acceptance Timeframe", :dates => ["pat_from", "pat_to"] },\
-    { :name => "Coding Starts", :dates => ["csd_on", "csd_on"] },\
-    { :name => "Mid-Term Evaluation Timeframe", :dates => ["met_from", "met_to"] },\
-    { :name =>"Coding Ends", :dates => ["ced_on", "ced_on"] },\
-    { :name => "Final Evaluation Timeframe", :dates => ["fet_from", "fet_to"] } ]
-    
     calendar_events.each do |e|
       existing_event = Event.find(:first, :conditions => {:name => e[:name] })
       if existing_event
@@ -93,6 +117,7 @@ class DashboardController < ApplicationController
           redirect_to :action => "configure"
         end
     end
+    
     flash[:notice] = "Timeframes successfully set."
     redirect_to :action => "configure"
   end
@@ -106,8 +131,11 @@ class DashboardController < ApplicationController
     app_settings = AppSetting.find(:all)
     if APP_CONFIG['fsoc_mode'] == "Summer Coding"
       if app_settings.empty?
-        flash[:notice] = 'FSoC is in Summer Coding mode, but Timeframes 
+        timeframes_error = 'FSoC is in Summer Coding mode, but Timeframes 
          have not yet been set.'
+        if params[:validation_error] != "true"
+          flash[:notice] = timeframes_error
+        end 
       else
         app_setting = app_settings[0]
       end
