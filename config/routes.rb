@@ -30,7 +30,8 @@ ActionController::Routing::Routes.draw do |map|
   map.resource :session
 
 
-  map.resources :projects, :member => { :volunteer => :get, :resign => :get, :signoff => :get }
+  map.resources :projects, :member => { :volunteer => :get, :resign => :get, \
+    :signoff => :get}
   map.resources :projects do |project| 
 	  project.resources :comments 
   end
@@ -39,7 +40,7 @@ ActionController::Routing::Routes.draw do |map|
     project.resources :proposals 
     project.resources :proposals, :member => { :allocate => :get, \
       :allocated => :put, :reject => :get, :signoff => :get, \
-      :admin_signoff  => :get, :certificate => :get }
+      :admin_signoff  => :get, :certificate => :get, :code_repository => :get }
   end
   map.resources :projects do |project| 
     project.resources :tasks, :member => { :unallocate => :get, :open => :get, :resolve => :get, :signoff => :get, :sendmessage => :get, :delivermessage => :put }

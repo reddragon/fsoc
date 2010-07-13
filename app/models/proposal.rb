@@ -17,6 +17,7 @@
 
 class Proposal < ActiveRecord::Base
   validates_presence_of :proposal_text
+  validates_url_format_of :repository_link
   
   belongs_to :project
   belongs_to :student, :class_name => "User", :foreign_key => "student_id"

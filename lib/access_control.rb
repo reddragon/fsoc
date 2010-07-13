@@ -60,6 +60,10 @@ module AccessControl
         || current_user.user_type == 'admin')
     end
     
+    def student_for_project?(project)
+     student? && current_user.project == project
+    end
+    
     #proposal specific
     def can_add_proposal?(project)
       proposals = Array.new
@@ -174,7 +178,7 @@ module AccessControl
       if base.respond_to? :helper_method
         base.send :helper_method, :within_timeframe?, :mentor?, :student?, :admin?
         base.send :helper_method, :can_create_project?, :can_edit_project?,\
-          :can_delete_project?
+          :can_delete_project?, :student_for_project?
         base.send :helper_method, :can_add_proposal?, :can_edit_proposal?, \
           :can_view_proposal_list?, :can_view_user_proposal_list?
         base.send :helper_method, :can_accept_proposal?, :can_signoff_proposal?

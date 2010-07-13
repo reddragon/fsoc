@@ -35,6 +35,13 @@
       <b>Status :</b>
       <%=h @proposal.status.humanize %>
     </p>
+    <p>
+      <b>Repository :</b>
+      <%=link_to h(@proposal.repository_link), h(@proposal.repository_link) %> 
+      <% if can_edit_proposal?(@proposal) %>
+        <%= link_to 'Set Repository', code_repository_project_proposal_path %>
+      <% end %>
+    </p>
     <% if @proposal.status == 'accepted' || @proposal.status == 'signed_off' %>
       <%= render :partial => "tasks/list", :locals => { :project => @proposal.project, :tasks => @proposal.tasks }%>
     <% end %>

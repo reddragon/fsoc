@@ -41,7 +41,7 @@ class ProjectsController < ApplicationController
     end
     @tasks = @project.tasks    
 
-	respond_to do |format|
+    respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @project }
     end
@@ -155,5 +155,5 @@ class ProjectsController < ApplicationController
     end    
     redirect_to(@project)    
   end
-
+  
 end

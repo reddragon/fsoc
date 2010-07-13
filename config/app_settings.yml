@@ -2,9 +2,9 @@ program_name: Fedora Summer Coding 2010
 admin_name: Karsten Wade
 admin_designation: Program Administrator
 
-fsoc_mode: Summer Coding
+fsoc_mode: Year Round
 
-auth_via_script: true
+auth_via_script: false
 account_system: Fedora Account System
 account_system_uri: https://admin.fedoraproject.org/accounts
 

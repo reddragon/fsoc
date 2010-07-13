@@ -169,4 +169,28 @@ class ProposalsController < ApplicationController
       format.pdf  { render :layout => false }
     end
   end
+  
+  def code_repository
+    @proposal = Proposal.find(params[:id])
+    if !can_view_proposal?(@proposal)
+      flash[:notice] = 'You are not authorised to access this proposal.'
+      redirect_to(@proposal.project)
+    end    
+  end
+  
+   def set_code_repository
+    @proposal = Proposal.find(params[:id])
+    if !can_edit_proposal?(@proposal)
+      flash[:notice] = 'You are not authorised to access this proposal.'
+      redirect_to @proposal.project
+    else
+      if @proposal.update_attributes(:repository_link => params[:repository_link])
+        flash[:notice] = 'Your proposal was successfully updated.'
+        redirect_to @proposal.project
+      else
+        flash[:notice] = 'Could not update your proposal'        
+        render :action => "code_repository"
+      end
+    end
+  end
 end

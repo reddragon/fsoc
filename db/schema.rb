@@ -69,9 +69,10 @@ ActiveRecord::Schema.define(:version => 20100629191641) do
     t.integer  "project_id"
     t.integer  "student_id"
     t.text     "proposal_text"
+    t.string   "repository_link"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "status",        :default => "pending"
+    t.string   "status",          :default => "pending"
   end
 
   create_table "tasks", :force => true do |t|

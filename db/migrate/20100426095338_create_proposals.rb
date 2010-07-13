@@ -4,6 +4,7 @@ class CreateProposals < ActiveRecord::Migration
       t.references :project
       t.references :student
       t.text :proposal_text
+      t.string :repository_link
       t.timestamps
     end
   end

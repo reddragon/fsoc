@@ -52,17 +52,20 @@
 </p>
 <br>
 <%= render :partial => "tasks/list", :locals => { :project => @project, :tasks => @tasks }%>
-
-	<p class="links">
-	<% if can_add_task?(@project) %>
-	  <%= link_to 'Add task', new_project_task_path(@project) %> |
-	<% end %>
-	<% if can_edit_project?(@project) %>
-	  <%= link_to 'Edit project', edit_project_path(@project) %> |
-	<% end %>
-	<% if can_add_proposal?(@project) %>
-	  <%= link_to 'Write a proposal', new_project_proposal_path(@project) %> |
-	<% end %>		
+  
+  <p class="links">
+    <% if can_add_task?(@project) %>
+      <%= link_to 'Add task', new_project_task_path(@project) %> |
+    <% end %>
+    
+    <% if can_edit_project?(@project) %>
+      <%= link_to 'Edit project', edit_project_path(@project) %> |
+    <% end %>
+    
+    <% if can_add_proposal?(@project) %>
+      <%= link_to 'Write a proposal', new_project_proposal_path(@project) %> |
+    <% end %>		
+    
     <%= link_to 'Discuss', project_comments_path(@project) %> |
     <%= link_to 'Back to projects', projects_path %>
   </p>
