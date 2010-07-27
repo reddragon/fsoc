@@ -21,6 +21,7 @@ Rails::Initializer.run do |config|
   config.gem "javan-whenever", :lib => false, :source => 'http://gems.github.com'
   config.gem "prawn"
   config.gem "curb"
+  config.gem "factory_girl"
   # config.gem "hpricot", :version => '0.6', :source => "http://code.whytheluckystiff.net"
   # config.gem "sqlite3-ruby", :lib => "sqlite3"
   # config.gem "aws-s3", :lib => "aws/s3"
