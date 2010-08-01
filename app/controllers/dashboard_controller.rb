@@ -112,6 +112,7 @@ class DashboardController < ApplicationController
         new_event.name = e[:name]
         new_event.start_at = APP_CONFIG[e[:dates][0]]
         new_event.end_at = APP_CONFIG[e[:dates][1]]
+        new_event.task_id = -1
         if !new_event.save
           flash[:notice] = "Could not set timeframes."
           redirect_to :action => "configure"
@@ -129,7 +130,7 @@ class DashboardController < ApplicationController
     end
     
     app_settings = AppSetting.find(:all)
-    if APP_CONFIG['fsoc_mode'] == "Summer Coding"
+    if APP_CONFIG['fsoc_mode'] == "summer_coding"
       if app_settings.empty?
         timeframes_error = 'FSoC is in Summer Coding mode, but Timeframes 
          have not yet been set.'
@@ -166,18 +167,28 @@ class DashboardController < ApplicationController
   end
   
   def certificates
+    if !admin?
+      flash[:notice] = 'You are not authorized to perform this action.'
+      redirect_to :controller => "dashboard"
+    end
     @pending_proposals = Proposal.find(:all, \
       :conditions => {:status => "admin_sign_off_pending"})
   end
   
   def uploadCertificateImg
     if admin?
-      post = DataFile.save(params[:upload], "public/images/certificate", params[:name])
-      flash[:notice] = 'Image uploaded sucessfully.'
+      if !params[:uploadlogo].nil?
+        DataFile.save(params[:uploadlogo], "public/images/certificate", params[:logo_name], 'logo')
+      end
+      
+      if !params[:uploadwatermark].nil?
+        DataFile.save(params[:uploadwatermark], "public/images/certificate", params[:watermark_name], 'watermark')
+      end
+      flash[:notice] = 'Images uploaded sucessfully.'
       redirect_to :controller => "dashboard", :action => "certificates"
     else
       flash[:notice] = 'You are not authorized to perform this action.'
-      redirect_to :controller => "dashboard", :action => "certificates"
+      redirect_to :controller => "dashboard"
     end
   end
 end

@@ -231,13 +231,13 @@ module EventCalendar
                   cal << %(<style type="text/css">.ec-event-#{event.id} a { color: #{event.color}; }</style>)
                 end
                 
-                if block_given?
-                  # add the additional html that was passed as a block to this helper
-                  cal << block.call({:event => event, :day => day.to_date, :options => options})
+                if event.task_id == -1
+                  cal << %(<a title="#{h(event.name)}">#{h(event.name)}</a>)
                 else
-                  # default content in case nothing is passed in
-                  cal << %(<a href="/events/#{event.id}" title="#{h(event.name)}">#{h(event.name)}</a>)
-                end
+                  task = Task.find(event.task_id)
+                  task_url = project_task_url(task.project, task)
+                  cal << %(<a href="#{task_url}" title="#{h(event.description)}">#{h(event.name)}</a>)
+                end  
                 
                 cal << %(</div></td>)
               end

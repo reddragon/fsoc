@@ -1,30 +1,6 @@
-<%
-#--
-#   Copyright (C) 2010 Shreyank Gupta <sgupta@REDHAT.COM>
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#++
-%>
+IMPORTANT: Replace this text (/public/About.txt) with something that describes
+your coding program.
 
-<div class="post">
-	<h2 class="title">
-	  About <%= APP_CONFIG['program']['name_abbreviation'] %>
-	</h2>
-	<p class="meta"><span class="date">&nbsp;</span></p>
-	<div style="clear: both;">&nbsp;</div>
-	<div class="entry">
-    <pre>
 Four Seasons of Code or, FSoC is a project tracking and management application.
 
 Let's repeat that again.
@@ -53,8 +29,3 @@ sign-off for the project and everything is just fine.
 That is exactly what FSoC aims to deliver. Nothing less. Keeping it
 simple is a beautiful game. The FSoC development team is learning the
 rules of it through continuous improvement
-    </pre>
-		
-	</div>
-</div>
-

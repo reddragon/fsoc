@@ -94,13 +94,21 @@ class ProposalsController < ApplicationController
     @student = @proposal.student
     @tasks.each do |task|
       due_date = params["task_#{task.id}".to_sym]
+      deadline = DateTime::civil(due_date[:year].to_i, due_date[:month].to_i, due_date[:day].to_i, 0, 0, 0) 
       due_date = Date.civil(due_date[:year].to_i, due_date[:month].to_i, due_date[:day].to_i)
+      task_event = Event.new
+      task_event.name = "Task #{task.id} Due"
+      task_event.start_at = deadline
+      task_event.end_at = deadline
+      task_event.task_id = task.id
+      task_event.description = "Deadline for #{task.description}"
+      task_event.save
       task.update_attributes(:due_date => due_date, :proposal => @proposal)
     end
     @student.proposals.each do |proposal|
       if proposal == @proposal
         status = 'accepted'
-        @subject = "Fedora Summer Coding"
+        @subject = APP_CONFIG['program']['name_full']
         @message = "Congratulations! You have been accepted for the project #{@proposal.project.name}!"
         
         #Sends a mail to the student on acceptance.
@@ -122,7 +130,7 @@ class ProposalsController < ApplicationController
       @proposal.update_attributes(:status => 'rejected')
       
       @student = @proposal.student
-      @subject = "Fedora Summer Coding"
+      @subject = APP_CONFIG['program']['name_full']
       @message = "We are sorry, we did not accept yor proposal for the project #{@proposal.project.name}!"
           
       #Sends a mail to the student on acceptance.
@@ -139,7 +147,7 @@ class ProposalsController < ApplicationController
   def signoff
     @proposal = Proposal.find(params[:id])  
     if can_signoff_proposal?(@proposal)
-      if APP_CONFIG['fsoc_mode'] == "Year Round"
+      if APP_CONFIG['fsoc_mode'] == "year_round"
         @proposal.update_attributes(:status => 'signed_off')
       else
         @proposal.update_attributes(:status => 'admin_sign_off_pending')

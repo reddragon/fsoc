@@ -18,13 +18,13 @@ module EventCalendar
   
     # For the given month, find the start and end dates
     # Find all the events within this range, and create event strips for them
-    def event_strips_for_month(shown_date, first_day_of_week=0, find_options = {})
+    def event_strips_for_month(shown_date, current_user, first_day_of_week=0, find_options = {})
       if first_day_of_week.is_a?(Hash)
         find_options.merge!(first_day_of_week)
         first_day_of_week =  0
       end
       strip_start, strip_end = get_start_and_end_dates(shown_date, first_day_of_week)
-      events = events_for_date_range(strip_start, strip_end, find_options)
+      events = events_for_date_range(current_user, strip_start, strip_end, find_options)
       event_strips = create_event_strips(strip_start, strip_end, events)
       event_strips
     end
@@ -48,12 +48,24 @@ module EventCalendar
     end
     
     # Get the events overlapping the given start and end dates
-    def events_for_date_range(start_d, end_d, find_options = {})
-      self.scoped(find_options).find(
+    def events_for_date_range(current_user, start_d, end_d, find_options = {})
+      events = self.scoped(find_options).find(
         :all,
         :conditions => [ "(? <= #{self.end_at_field}) AND (#{self.start_at_field}< ?)", start_d.to_time.utc, end_d.to_time.utc ],
         :order => "#{self.start_at_field} ASC"
       )
+      filtered_events = []
+      events.each do |e|
+        if e.task_id == -1
+          filtered_events.push(e) 
+        else
+          task = Task.find(e.task_id)
+          if task.mentor == current_user or task.student == current_user
+            filtered_events.push(e)
+          end
+        end
+      end
+      filtered_events
     end
     
     # Create the various strips that show evetns

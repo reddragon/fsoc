@@ -37,7 +37,10 @@
         to get started.
     - else
       %div{:id => 'dashboard_content'}
-        - if mentor?(current_user) || admin?
+        - if admin?
+          %h3
+            Welcome, admin
+        - if mentor?(current_user)
           - if !current_user.project_mentorships.empty?
             %h3
               Projects mentored by
@@ -95,15 +98,14 @@
             %h3
               Not a student for any projects                  
       %p.links
-        = link_to 'My Projects', :controller => "dashboard"
-        &nbsp;|&nbsp;
-        = link_to 'My Proposals', :controller => "dashboard", :action => "proposals"
-        &nbsp;|&nbsp;
-        = link_to 'Project Task Status', :controller => "dashboard", :action => "task_status"
-        - if admin?
+        - if !admin?
+          = link_to 'My Projects', :controller => "dashboard"
           &nbsp;|&nbsp;
+          = link_to 'My Proposals', :controller => "dashboard", :action => "proposals"
+          &nbsp;|&nbsp;
+          = link_to 'Project Task Status', :controller => "dashboard", :action => "task_status"
+        - if admin?
           = link_to 'Configure', :controller => "dashboard", :action => "configure"
           &nbsp;|&nbsp;
           = link_to 'Certificates', :controller => "dashboard", :action => "certificates"
-      
 

@@ -117,13 +117,13 @@
     %br      
       
     %p.links
-      = link_to 'My Projects', :controller => "dashboard"
-      &nbsp;|&nbsp;
-      = link_to 'My Proposals', :controller => "dashboard", :action => "proposals"
-      &nbsp;|&nbsp;
-      = link_to 'Project Task Status', :controller => "dashboard", :action => "task_status"
-      - if admin?
+      - if !admin?
+        = link_to 'My Projects', :controller => "dashboard"
         &nbsp;|&nbsp;
+        = link_to 'My Proposals', :controller => "dashboard", :action => "proposals"
+        &nbsp;|&nbsp;
+        = link_to 'Project Task Status', :controller => "dashboard", :action => "task_status"
+      - if admin?
         = link_to 'Configure', :controller => "dashboard", :action => "configure"
         &nbsp;|&nbsp;
         = link_to 'Certificates', :controller => "dashboard", :action => "certificates"

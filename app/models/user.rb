@@ -21,7 +21,7 @@ class User < ActiveRecord::Base
   include Authentication
   include Authentication::ByPassword
   include Authentication::ByCookieToken
-  include ExternalAccountSystem
+  include APP_CONFIG['auth_module'].classify.constantize()
 
   validates_presence_of     :login
   validates_length_of       :login,    :within => 3..40

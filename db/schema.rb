@@ -40,6 +40,8 @@ ActiveRecord::Schema.define(:version => 20100629191641) do
     t.string   "name"
     t.datetime "start_at"
     t.datetime "end_at"
+    t.integer  "task_id"
+    t.string   "description"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

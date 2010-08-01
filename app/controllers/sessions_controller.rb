@@ -17,7 +17,7 @@
 
 # This controller handles the login/logout function of the site.  
 class SessionsController < ApplicationController
-  include ExternalAccountSystem
+  include APP_CONFIG['auth_module'].classify.constantize()
   # render new.rhtml
   def new
   end

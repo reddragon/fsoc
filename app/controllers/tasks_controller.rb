@@ -86,6 +86,10 @@ class TasksController < ApplicationController
     @task = Task.find(params[:id])  
     if can_edit_task?(@task)
       @task.update_attributes(:due_date => nil, :proposal => nil)
+      task_events = Event.find(:all, :conditions => { :task_id => @task.id })
+      task_events.each do |task_event|
+        task_event.destroy
+      end  
       flash[:notice] = 'Successfully unallocated task!'
     else    
       flash[:notice] = 'Cannot unallocate task!'  

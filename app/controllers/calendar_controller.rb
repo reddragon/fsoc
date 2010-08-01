@@ -5,12 +5,12 @@ class CalendarController < ApplicationController
     @month = params[:month].to_i
     @year = params[:year].to_i
     @shown_month = Date.civil(@year, @month)
-    @event_strips = Event.event_strips_for_month(@shown_month)
+    @event_strips = Event.event_strips_for_month(@shown_month, current_user)
   end
   
   def dates
     @mode = APP_CONFIG['fsoc_mode']
-    if @mode == "Summer Coding"
+    if @mode == "summer_coding"
       @pct_from = (APP_CONFIG['pct_from']).to_formatted_s(:long)
       @pct_to = (APP_CONFIG['pct_to']).to_formatted_s(:long)
       @pst_from = (APP_CONFIG['pst_from']).to_formatted_s(:long)

@@ -25,13 +25,13 @@
 
 %h3
   FSoC is currently in
-  = APP_CONFIG['fsoc_mode']
+  = APP_CONFIG['fsoc_mode'].humanize.titleize
   mode
   %br
 %br
 
 %br
-  - if APP_CONFIG['fsoc_mode'] == "Summer Coding"
+  - if APP_CONFIG['fsoc_mode'] == "summer_coding"
     - form_tag :action => "set_timeframes" do
       %h3
         Project Creation Timeframe
@@ -130,13 +130,7 @@
       = submit_tag  'Set Timeframes' 
       
 %p.links
-  = link_to 'My Projects', :controller => "dashboard"
-  &nbsp;|&nbsp;
-  = link_to 'My Proposals', :controller => "dashboard", :action => "proposals"
-  &nbsp;|&nbsp;
-  = link_to 'Task Status', :controller => "dashboard", :action => "task_status"
   - if admin?
-    &nbsp;|&nbsp;
     = link_to 'Configure', :controller => "dashboard", :action => "configure"
     &nbsp;|&nbsp;
     = link_to 'Certificates', :controller => "dashboard", :action => "certificates"
