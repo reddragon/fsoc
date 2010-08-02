@@ -1,18 +1,6 @@
 --- 
 timeframes: 
-  pst_to: 2010-08-01T00:00:00+00:00
-  fet_from: 2010-08-01T00:00:00+00:00
-  pat_from: 2010-08-01T00:00:00+00:00
-  csd_on: 2010-08-01T00:00:00+00:00
-  set: true
-  pct_to: 2010-08-01T00:00:00+00:00
-  pat_to: 2010-08-01T00:00:00+00:00
-  met_to: 2010-08-01T00:00:00+00:00
-  pst_from: 2010-08-01T00:00:00+00:00
-  met_from: 2010-08-01T00:00:00+00:00
-  pct_from: 2010-08-01T00:00:00+00:00
-  ced_on: 2010-08-01T00:00:00+00:00
-  fet_to: 2010-08-01T00:00:00+00:00
+  set:false
 admin: 
   name: Abc Xyz
   designation: Program Administrator
@@ -20,7 +8,7 @@ admin:
   password: random
   email: someaddress@someorg.org
 fsoc: 
-  mode: summer_coding
+  mode: year_round
 program: 
   name: Four Seasons of Code
   name_abbreviation: FSoC
