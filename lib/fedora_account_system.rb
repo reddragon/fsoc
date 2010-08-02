@@ -17,11 +17,13 @@
 module FedoraAccountSystem
   #Contains methods that links FSoC with an external account system
   
+  #Needed in the signup page
+  AccountSystemUri = "https://admin.fedoraproject.org/accounts"
+  
   #This method is called to validate the username/password pair
   def authenticated_externally?(username, password)
-    fas_url = "https://admin.fedoraproject.org/accounts/home"
-
-    curlobj = Curl::Easy.new(fas_url)
+    auth_url = AccountSystemUri + "/home"
+    curlobj = Curl::Easy.new(auth_url)
 
     pf_login = Curl::PostField.content('login', 'Login')
     pf_username = Curl::PostField.content('user_name', username)
@@ -35,6 +37,7 @@ module FedoraAccountSystem
       return false
     end
   end
+  
   
   def self.included(base)
       if base.respond_to? :helper_method

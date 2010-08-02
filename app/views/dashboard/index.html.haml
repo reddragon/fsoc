@@ -39,7 +39,83 @@
       %div{:id => 'dashboard_content'}
         - if admin?
           %h3
-            Welcome, admin
+            FSoC Settings
+          %br
+          %h3
+            Program
+          %table{:id => 'hor-minimalist-a'}
+            %tr
+              %th
+                Setting
+              %th
+                Value
+              %th  
+            %tr
+              %td
+                Name
+              %td
+                = APP_CONFIG['program']['name']
+              %td
+                - # Edit
+            %tr
+              %td
+                Name Abbreviation
+              %td
+                = APP_CONFIG['program']['name_abbreviation']
+              %td
+                - # Edit
+            %tr
+              %td
+                Year
+              %td
+                = APP_CONFIG['program']['year']
+              %td
+                - # Edit    
+                        
+          %br
+          %h3
+            Admin
+          %table{:id => 'hor-minimalist-a'}
+            %tr
+              %th
+                Setting
+              %th
+                Value
+              %th  
+            %tr
+              %td
+                Name
+              %td
+                = APP_CONFIG['admin']['name']
+              %td
+                - # Edit
+            %tr
+              %td
+                Designation
+              %td
+                = APP_CONFIG['admin']['designation']
+              %td
+                - # Edit
+                
+          %br
+          %h3
+            FSoC
+          %table{:id => 'hor-minimalist-a'}
+            %tr
+              %th
+                Setting
+              %th
+                Value
+              %th  
+            %tr
+              %td
+                Mode
+              %td
+                = APP_CONFIG['fsoc']['mode']
+              %td
+                - # Edit      
+          
+            
         - if mentor?(current_user)
           - if !current_user.project_mentorships.empty?
             %h3
@@ -105,7 +181,8 @@
           &nbsp;|&nbsp;
           = link_to 'Project Task Status', :controller => "dashboard", :action => "task_status"
         - if admin?
-          = link_to 'Configure', :controller => "dashboard", :action => "configure"
-          &nbsp;|&nbsp;
+          - if can_configure?
+            = link_to 'Configure', :controller => "dashboard", :action => "configure"
+            &nbsp;|&nbsp;
           = link_to 'Certificates', :controller => "dashboard", :action => "certificates"
 

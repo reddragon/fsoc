@@ -21,8 +21,9 @@ class User < ActiveRecord::Base
   include Authentication
   include Authentication::ByPassword
   include Authentication::ByCookieToken
-  include APP_CONFIG['auth_module'].classify.constantize()
-
+  if !APP_CONFIG['auth'].nil? and !APP_CONFIG['auth']['module'].nil?
+    include APP_CONFIG['auth']['module'].classify.constantize()
+  end
   validates_presence_of     :login
   validates_length_of       :login,    :within => 3..40
   validates_uniqueness_of   :login
@@ -63,7 +64,7 @@ class User < ActiveRecord::Base
   def self.authenticate(login, password)
     return nil if login.blank? || password.blank?
     u = find_by_login(login.downcase) # need to get the salt
-    if APP_CONFIG['auth_via_script'] == true
+    if !APP_CONFIG['auth'].nil? and !APP_CONFIG['auth']['module'].nil?
       #response = current_user.login
       u && u.authenticated_externally?(login, password) ? u : nil
     else

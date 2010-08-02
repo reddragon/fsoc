@@ -34,7 +34,7 @@
       To retain the default certificate layout, make sure the images are in 
       \.png format.  
     %br
-    - form_tag ({:action => 'uploadCertificateImg', :logo_name => "complete_logo.png", :watermark_name => "watermark.png"}, :multipart => true) do
+    - form_tag ({:action => 'upload_certificate_images', :logo_name => "complete_logo.png", :watermark_name => "watermark.png"}, :multipart => true) do
       %b
         Program Logo
       %br  
@@ -51,8 +51,9 @@
     
     %p.links
       - if admin?
-        = link_to 'Configure', :controller => "dashboard", :action => "configure"
-        &nbsp;|&nbsp;
+        - if can_configure?
+          = link_to 'Configure', :controller => "dashboard", :action => "configure"
+          &nbsp;|&nbsp;
         = link_to 'Certificates', :controller => "dashboard", :action => "certificates"
            
                  

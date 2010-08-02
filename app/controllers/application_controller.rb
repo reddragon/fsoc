@@ -24,8 +24,9 @@ class ApplicationController < ActionController::Base
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
   include AuthenticatedSystem
   include AccessControl
-  include APP_CONFIG['auth_module'].classify.constantize()
-  
+  if !APP_CONFIG['auth'].nil? and !APP_CONFIG['auth']['module'].nil?
+    include APP_CONFIG['auth']['module'].classify.constantize()
+  end
   # Scrub sensitive parameters from your log
   # Filter the password and password_confirmation
   # fields from the log files

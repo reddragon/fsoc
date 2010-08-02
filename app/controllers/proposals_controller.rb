@@ -92,36 +92,59 @@ class ProposalsController < ApplicationController
     @tasks = Task.find(params[:task_ids])
     @proposal = Proposal.find(params[:id])
     @student = @proposal.student
-    @tasks.each do |task|
-      due_date = params["task_#{task.id}".to_sym]
-      deadline = DateTime::civil(due_date[:year].to_i, due_date[:month].to_i, due_date[:day].to_i, 0, 0, 0) 
-      due_date = Date.civil(due_date[:year].to_i, due_date[:month].to_i, due_date[:day].to_i)
-      task_event = Event.new
-      task_event.name = "Task #{task.id} Due"
-      task_event.start_at = deadline
-      task_event.end_at = deadline
-      task_event.task_id = task.id
-      task_event.description = "Deadline for #{task.description}"
-      task_event.save
-      task.update_attributes(:due_date => due_date, :proposal => @proposal)
-    end
-    @student.proposals.each do |proposal|
-      if proposal == @proposal
-        status = 'accepted'
-        @subject = APP_CONFIG['program']['name_full']
-        @message = "Congratulations! You have been accepted for the project #{@proposal.project.name}!"
-        
-        #Sends a mail to the student on acceptance.
-        #Remove if not required
-        Mail.deliver_message(@student.email, @subject, @message)
-      else
-        status = 'student_busy'
+    dates_valid = true
+    
+    if APP_CONFIG['fsoc']['mode'] == "year_round"
+      @tasks.each do |task|
+        due_date = params["task_#{task.id}".to_sym]
+        due_date = DateTime::civil(due_date[:year].to_i, due_date[:month].to_i, due_date[:day].to_i, 0, 0, 0)
+        #Check if the due-date is after the coding starts date, and is before or 
+        #the coding ends date.
+        if due_date < APP_CONFIG['timeframes']['csd_on'] or \
+          due_date > APP_CONFIG['timeframes']['ced_on']
+          dates_valid = false
+          flash[:notice] = "Deadline for task: #{task.title} is invalid. \
+            Check whether it lies between the Coding Starts and Coding Ends dates."
+          break
+        end
       end
-      proposal.update_attributes(:status => status)
     end
+    
+    if !dates_valid
+      puts "Invalid dates"
+      redirect_to @proposal.project
+    else
+      @tasks.each do |task|
+        due_date = params["task_#{task.id}".to_sym]
+        deadline = DateTime::civil(due_date[:year].to_i, due_date[:month].to_i, due_date[:day].to_i, 0, 0, 0) 
+        due_date = Date.civil(due_date[:year].to_i, due_date[:month].to_i, due_date[:day].to_i)
+        task_event = Event.new
+        task_event.name = "Task #{task.id} Due"
+        task_event.start_at = deadline
+        task_event.end_at = deadline
+        task_event.task_id = task.id
+        task_event.description = "Deadline for #{task.title}"
+        task_event.save
+        task.update_attributes(:due_date => due_date, :proposal => @proposal)
+      end
+      @student.proposals.each do |proposal|
+        if proposal == @proposal
+          status = 'accepted'
+          @subject = APP_CONFIG['program']['name_full']
+          @message = "Congratulations! You have been accepted for the project #{@proposal.project.name}!"
         
-    flash[:notice] = 'Project tasks successfully allocated.'
-    redirect_to @proposal.project
+          #Sends a mail to the student on acceptance.
+          #Remove if not required
+          Mail.deliver_message(@student.email, @subject, @message)
+        else
+          status = 'student_busy'
+        end
+        proposal.update_attributes(:status => status)
+      end
+        
+      flash[:notice] = 'Project tasks successfully allocated.'
+      redirect_to @proposal.project
+    end
   end
   
   def reject
@@ -147,7 +170,7 @@ class ProposalsController < ApplicationController
   def signoff
     @proposal = Proposal.find(params[:id])  
     if can_signoff_proposal?(@proposal)
-      if APP_CONFIG['fsoc_mode'] == "year_round"
+      if APP_CONFIG['fsoc']['mode'] == "year_round"
         @proposal.update_attributes(:status => 'signed_off')
       else
         @proposal.update_attributes(:status => 'admin_sign_off_pending')

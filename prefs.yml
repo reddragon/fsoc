@@ -1,0 +1,26 @@
+--- 
+fet_from: 2010-09-11 00:00:00 Z
+pst_to: 2010-08-04 00:00:00 Z
+csd_on: 2010-08-06 00:00:00 Z
+pat_from: 2010-08-01 00:00:00 Z
+auth: 
+  module: fedora_account_system
+fsoc_mode: summer_coding
+met_to: 2010-08-30 00:00:00 Z
+pat_to: 2010-08-05 00:00:00 Z
+pct_to: 2010-08-03 00:00:00 Z
+pst_from: 2010-08-01 00:00:00 Z
+admin: 
+  name: Mr. XYZ
+  designation: Program Administrator
+  username: xyz
+  password: random
+  email: someaddress@someorg.org
+met_from: 2010-08-20 00:00:00 Z
+ced_on: 2010-09-10 00:00:00 Z
+pct_from: 2010-08-01 00:00:00 Z
+program: 
+  name: Four Seasons of Code
+  name_abbreviation: FSoC
+  year: 2010
+fet_to: 2010-09-12 00:00:00 Z

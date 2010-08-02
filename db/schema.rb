@@ -9,24 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100629191641) do
-
-  create_table "app_settings", :force => true do |t|
-    t.datetime "pct_from"
-    t.datetime "pct_to"
-    t.datetime "pst_from"
-    t.datetime "pst_to"
-    t.datetime "pat_from"
-    t.datetime "pat_to"
-    t.datetime "csd_on"
-    t.datetime "met_from"
-    t.datetime "met_to"
-    t.datetime "ced_on"
-    t.datetime "fet_from"
-    t.datetime "fet_to"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
+ActiveRecord::Schema.define(:version => 20100627162649) do
 
   create_table "comments", :force => true do |t|
     t.text     "content"

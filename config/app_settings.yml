@@ -1,17 +1,27 @@
-program: 
-  name:              Fedora Summer Coding
-  name_abbreviation: FSC
-  year:              2010
-
+--- 
+timeframes: 
+  pst_to: 2010-08-01T00:00:00+00:00
+  fet_from: 2010-08-01T00:00:00+00:00
+  pat_from: 2010-08-01T00:00:00+00:00
+  csd_on: 2010-08-01T00:00:00+00:00
+  set: true
+  pct_to: 2010-08-01T00:00:00+00:00
+  pat_to: 2010-08-01T00:00:00+00:00
+  met_to: 2010-08-01T00:00:00+00:00
+  pst_from: 2010-08-01T00:00:00+00:00
+  met_from: 2010-08-01T00:00:00+00:00
+  pct_from: 2010-08-01T00:00:00+00:00
+  ced_on: 2010-08-01T00:00:00+00:00
+  fet_to: 2010-08-01T00:00:00+00:00
 admin: 
-  name:        Karsten Wade
+  name: Abc Xyz
   designation: Program Administrator
-  username:    quaid 
-  password:    random
-  email:       kwade@redhat.com
-
-fsoc_mode: summer_coding
-
-auth_module: fedora_account_system
-auth_via_script: false
-account_system_uri: https://admin.fedoraproject.org/accounts
+  username: admin
+  password: random
+  email: someaddress@someorg.org
+fsoc: 
+  mode: summer_coding
+program: 
+  name: Four Seasons of Code
+  name_abbreviation: FSoC
+  year: 2010

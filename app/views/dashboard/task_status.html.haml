@@ -35,25 +35,33 @@
       - if student?(current_user)
         %h3
           = @projects.name
-          %table{:id => 'hor-minimalist-a'}
-            %tr
-              %th
-                Task Name  
-              %th
-                Due-Date
-              %th
-                Status
-            - current_user.tasks.each do |task|
+          - if current_user.tasks.empty?
+            You do not have any tasks in your project.
+          - else
+            %table{:id => 'hor-minimalist-a'}
               %tr
-                %td
-                  = link_to task.title, project_task_path(task.project, task)
-                %td
-                  = task.due_date
-                %td
-                  = colored_task_status(task)
+                %th
+                  Task Name  
+                %th
+                  Due-Date
+                %th
+                  Status
+              - current_user.tasks.each do |task|
+                %tr
+                  %td
+                    = link_to task.title, project_task_path(task.project, task)
+                  %td
+                    = task.due_date
+                  %td
+                    = colored_task_status(task)
       - else
+        - #To test if any tasks are connected to this mentor
+        - has_some_tasks = false
         - if !@projects_mentoring.empty?
           - @projects_mentoring.each do |project|
+            - if project.tasks.empty?
+              - next
+            has_some_tasks = true  
             %h3
               = project.name
               &nbsp;(Mentor)
@@ -85,6 +93,9 @@
         
         - if !@projects_only_proposed.empty?
           - @projects_only_proposed.each do |project|
+            - if project.tasks.empty?
+              - next
+            has_some_tasks = true   
             %h3
               = project.name
               &nbsp;(Proposer)
@@ -113,7 +124,9 @@
                     %td
                       = colored_task_status(task)                           
               %br
-          
+        - if !has_some_tasks
+          %h3
+            You do not have any tasks linked to your projects.  
     %br      
       
     %p.links

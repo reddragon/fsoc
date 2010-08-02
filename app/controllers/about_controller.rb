@@ -18,5 +18,6 @@
 class AboutController < ApplicationController
 
   def index
+    @content = File.read("#{RAILS_ROOT}/public/About.txt")
   end
 end

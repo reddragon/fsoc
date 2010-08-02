@@ -57,11 +57,11 @@ class UsersController < ApplicationController
     logout_keeping_session!
     @user = User.new(params[:user])
     @user.user_type = 'admin' if User.first.nil?
-    if APP_CONFIG['auth_via_script']
+    if !APP_CONFIG['auth'].nil? and !APP_CONFIG['auth']['module'].nil?
       response = authenticated_externally?(@user.login, @user.password)
       if !response
         flash[:notice] = "Your username and password do not correspond to\
-          a valid account at #{APP_CONFIG['account_system']}."
+          a valid account at #{((APP_CONFIG['auth']['module'] + "::AccountSystemUri").classify).constantize}."
         render :action => 'new'
       else
         success = @user && @user.save

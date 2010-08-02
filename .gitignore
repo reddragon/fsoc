@@ -3,3 +3,4 @@
 log/*.log
 tags
 ~*
+/config/default_app_settings.yml

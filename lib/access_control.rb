@@ -20,7 +20,9 @@ module AccessControl
 
   protected
     def within_timeframe?(timeframe)
-      APP_CONFIG['fsoc_mode'] == "year_round" || (APP_CONFIG[timeframe + "_from"] <= DateTime.now and DateTime.now <= APP_CONFIG[timeframe + "_to"]) 
+      APP_CONFIG['fsoc']['mode'] == "year_round" || \
+        (APP_CONFIG['timeframes'][timeframe + "_from"] <= DateTime.now \
+        and DateTime.now <= APP_CONFIG['timeframes'][timeframe + "_to"]) 
     end
     
     #user specific
@@ -170,7 +172,7 @@ module AccessControl
     
     #Dashboard specific
     def can_configure?(user = current_user)
-      admin?
+      admin? and APP_CONFIG['fsoc']['mode'] == 'summer_coding'
     end
 	
     #Make available as ActionView helper methods.

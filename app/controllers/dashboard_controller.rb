@@ -18,6 +18,10 @@
 class DashboardController < ApplicationController
 
   def index
+    output = File.new("#{RAILS_ROOT}/config/prefs.yml", 'w+')
+    output.puts YAML.dump(APP_CONFIG)
+    output.close
+    puts APP_CONFIG['timeframes']
   end
   
   def dashboard_links
@@ -36,14 +40,6 @@ class DashboardController < ApplicationController
     
     app_settings = AppSetting.find(:all)
     
-    if !app_settings.empty?
-      if !app_settings[0].destroy
-        flash[:notice] = "Could not set timeframes."
-        redirect_to :action => "configure"
-      end
-    end
-    
-    app_setting = AppSetting.new
     date_params.each do |dp|
       date_array = params[dp.intern][0].split("-")
       if date_array.length != 3
@@ -51,7 +47,7 @@ class DashboardController < ApplicationController
         redirect_to :action => "configure", :validation_error => "true"
         return
       end
-      APP_CONFIG[dp] = DateTime::civil(date_array[0].to_i,\
+      APP_CONFIG['timeframes'][dp] = DateTime::civil(date_array[0].to_i,\
        date_array[1].to_i, date_array[2].to_i, 0, 0, 0) 
     end
     
@@ -66,7 +62,7 @@ class DashboardController < ApplicationController
     { :name => "Final Evaluation Timeframe", :dates => ["fet_from", "fet_to"] } ]
     
     calendar_events.each do |e|
-      if APP_CONFIG[e[:dates][0]] > APP_CONFIG[e[:dates][1]]
+      if APP_CONFIG['timeframes'][e[:dates][0]] > APP_CONFIG['timeframes'][e[:dates][1]]
         flash[:notice] = "#{e[:name]} starting date is after ending date."
         redirect_to :action => "configure", :validation_error => "true"
         return
@@ -76,7 +72,7 @@ class DashboardController < ApplicationController
         if f == e
           break
         else
-          if APP_CONFIG[e[:dates][0]] < APP_CONFIG[f[:dates][0]] 
+          if APP_CONFIG['timeframes'][e[:dates][0]] < APP_CONFIG['timeframes'][f[:dates][0]] 
             flash[:notice] = "#{e[:name]} should not be before #{f[:name]}"
             redirect_to :action => "configure", :validation_error => "true"
             return
@@ -85,23 +81,10 @@ class DashboardController < ApplicationController
       end
     end
     
-    app_setting.pct_from = APP_CONFIG['pct_from']
-    app_setting.pct_to = APP_CONFIG['pct_to']
-    app_setting.pst_from = APP_CONFIG['pst_from']
-    app_setting.pst_to = APP_CONFIG['pst_to']
-    app_setting.pat_from = APP_CONFIG['pat_from']
-    app_setting.pat_to = APP_CONFIG['pat_to']
-    app_setting.csd_on = APP_CONFIG['csd_on']
-    app_setting.met_from = APP_CONFIG['met_from']
-    app_setting.met_to = APP_CONFIG['met_to']
-    app_setting.ced_on = APP_CONFIG['ced_on']
-    app_setting.fet_from = APP_CONFIG['fet_from']
-    app_setting.fet_to = APP_CONFIG['fet_to']
-    
-    if !app_setting.save
-      flash[:notice] = "Could not set timeframes."
-      redirect_to :action => "configure"
-    end
+    APP_CONFIG['timeframes']['set'] = true
+    output = File.new("#{RAILS_ROOT}/config/app_settings.yml", 'w+')
+    output.puts YAML.dump(APP_CONFIG)
+    output.close
     
     calendar_events.each do |e|
       existing_event = Event.find(:first, :conditions => {:name => e[:name] })
@@ -110,8 +93,8 @@ class DashboardController < ApplicationController
       end
         new_event = Event.new
         new_event.name = e[:name]
-        new_event.start_at = APP_CONFIG[e[:dates][0]]
-        new_event.end_at = APP_CONFIG[e[:dates][1]]
+        new_event.start_at = APP_CONFIG['timeframes'][e[:dates][0]]
+        new_event.end_at = APP_CONFIG['timeframes'][e[:dates][1]]
         new_event.task_id = -1
         if !new_event.save
           flash[:notice] = "Could not set timeframes."
@@ -129,16 +112,14 @@ class DashboardController < ApplicationController
       redirect_to :controller => "dashboard"
     end
     
-    app_settings = AppSetting.find(:all)
-    if APP_CONFIG['fsoc_mode'] == "summer_coding"
-      if app_settings.empty?
+    
+    if APP_CONFIG['fsoc']['mode'] == "summer_coding"
+      if APP_CONFIG['timeframes']['set'] == false
         timeframes_error = 'FSoC is in Summer Coding mode, but Timeframes 
          have not yet been set.'
         if params[:validation_error] != "true"
           flash[:notice] = timeframes_error
-        end 
-      else
-        app_setting = app_settings[0]
+        end
       end
     end    
   end
@@ -175,14 +156,14 @@ class DashboardController < ApplicationController
       :conditions => {:status => "admin_sign_off_pending"})
   end
   
-  def uploadCertificateImg
+  def upload_certificate_images
     if admin?
       if !params[:uploadlogo].nil?
-        DataFile.save(params[:uploadlogo], "public/images/certificate", params[:logo_name], 'logo')
+        file_upload(params[:uploadlogo], "public/images/certificate", params[:logo_name], 'logo')
       end
       
       if !params[:uploadwatermark].nil?
-        DataFile.save(params[:uploadwatermark], "public/images/certificate", params[:watermark_name], 'watermark')
+        file_upload(params[:uploadwatermark], "public/images/certificate", params[:watermark_name], 'watermark')
       end
       flash[:notice] = 'Images uploaded sucessfully.'
       redirect_to :controller => "dashboard", :action => "certificates"
@@ -190,5 +171,12 @@ class DashboardController < ApplicationController
       flash[:notice] = 'You are not authorized to perform this action.'
       redirect_to :controller => "dashboard"
     end
+  end
+  
+  def file_upload(upload, directory, name, operand)
+    # create the file path
+    path = File.join(directory, name)
+    # write the file
+    File.open(path, "wb") { |f| f.write(upload[operand].read) }
   end
 end
