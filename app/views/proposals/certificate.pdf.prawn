@@ -39,7 +39,7 @@ require "prawn/core"
     pdf.text "For successfully completing the project\n\
       #{@proposal.project.name}", \
       :align => :center, :size => 20
-    pdf.text "in the #{APP_CONFIG['program']['name']} #{APP_CONFIG['program']['year']} program.", \
+    pdf.text "in the #{APP_CONFIG['program']['name']} #{APP_CONFIG['program']['edition']} program.", \
       :align => :center, :size => 20
       
     #pdf.move_down 80

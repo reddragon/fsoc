@@ -132,6 +132,6 @@
 %p.links
   - if admin?
     - if can_configure?
-      = link_to 'Configure', :controller => "dashboard", :action => "configure"
+      = link_to 'Configure Timeframes', :controller => "dashboard", :action => "configure"
       &nbsp;|&nbsp;
     = link_to 'Certificates', :controller => "dashboard", :action => "certificates"

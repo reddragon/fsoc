@@ -1,0 +1,11 @@
+%tr
+  %td
+    %b
+      Edit
+      = @sub.titleize   
+%tr
+  %td
+    - form_tag(:action => "update_app_settings", :main => @main, :sub => @sub) do
+      = text_field_tag "value", APP_CONFIG[@main][@sub]
+      &nbsp;
+      = submit_tag 'Update'

@@ -1,6 +1,6 @@
 --- 
 timeframes: 
-  set:false
+  set: false
 admin: 
   name: Abc Xyz
   designation: Program Administrator
@@ -12,4 +12,4 @@ fsoc:
 program: 
   name: Four Seasons of Code
   name_abbreviation: FSoC
-  year: 2010
+  edition: "2010"

@@ -15,6 +15,7 @@
 -#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -#++
 
+= javascript_include_tag :defaults
  
 .post
   %h2.title
@@ -39,7 +40,7 @@
       %div{:id => 'dashboard_content'}
         - if admin?
           %h3
-            FSoC Settings
+            FSoC Settings 
           %br
           %h3
             Program
@@ -56,21 +57,30 @@
               %td
                 = APP_CONFIG['program']['name']
               %td
-                - # Edit
+                = link_to_remote 'Edit', :update => "edit_program_name", :url => {:action => 'edit_app_settings', :main => "program", :sub => "name" }
+            %tr
+              %td
+                %div{:id => "edit_program_name"}    
             %tr
               %td
                 Name Abbreviation
               %td
                 = APP_CONFIG['program']['name_abbreviation']
               %td
-                - # Edit
+                = link_to_remote 'Edit', :update => "edit_program_name_abbreviation", :url => {:action => 'edit_app_settings', :main => "program", :sub => "name_abbreviation" }
             %tr
               %td
-                Year
+                %div{:id => "edit_program_name_abbreviation"} 
+            %tr
               %td
-                = APP_CONFIG['program']['year']
+                Edition
               %td
-                - # Edit    
+                = APP_CONFIG['program']['edition']
+              %td
+                = link_to_remote 'Edit', :update => "edit_program_edition", :url => {:action => 'edit_app_settings', :main => "program", :sub => "edition" }
+            %tr
+              %td
+                %div{:id => "edit_program_edition"}    
                         
           %br
           %h3
@@ -88,14 +98,20 @@
               %td
                 = APP_CONFIG['admin']['name']
               %td
-                - # Edit
+                = link_to_remote 'Edit', :update => "edit_admin_name", :url => {:action => 'edit_app_settings', :main => "admin", :sub => "name" }
+            %tr
+              %td
+                %div{:id => "edit_admin_name"} 
             %tr
               %td
                 Designation
               %td
                 = APP_CONFIG['admin']['designation']
               %td
-                - # Edit
+                = link_to_remote 'Edit', :update => "edit_admin_designation", :url => {:action => 'edit_app_settings', :main => "admin", :sub => "designation" }
+            %tr
+              %td
+                %div{:id => "edit_admin_designation"} 
                 
           %br
           %h3
@@ -113,7 +129,10 @@
               %td
                 = APP_CONFIG['fsoc']['mode']
               %td
-                - # Edit      
+                = link_to_remote 'Edit', :update => "edit_fsoc_mode", :url => {:action => 'edit_app_settings', :main => "fsoc", :sub => "mode" }
+            %tr
+              %td
+                %div{:id => "edit_fsoc_mode"}       
           
             
         - if mentor?(current_user)
@@ -182,7 +201,7 @@
           = link_to 'Project Task Status', :controller => "dashboard", :action => "task_status"
         - if admin?
           - if can_configure?
-            = link_to 'Configure', :controller => "dashboard", :action => "configure"
+            = link_to 'Configure Timeframes', :controller => "dashboard", :action => "configure"
             &nbsp;|&nbsp;
           = link_to 'Certificates', :controller => "dashboard", :action => "certificates"
 

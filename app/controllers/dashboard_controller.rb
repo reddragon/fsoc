@@ -18,10 +18,6 @@
 class DashboardController < ApplicationController
 
   def index
-    output = File.new("#{RAILS_ROOT}/config/prefs.yml", 'w+')
-    output.puts YAML.dump(APP_CONFIG)
-    output.close
-    puts APP_CONFIG['timeframes']
   end
   
   def dashboard_links
@@ -178,5 +174,34 @@ class DashboardController < ApplicationController
     path = File.join(directory, name)
     # write the file
     File.open(path, "wb") { |f| f.write(upload[operand].read) }
+  end
+  
+  def edit_app_settings
+    @main = params[:main]
+    @sub = params[:sub]
+    @value = APP_CONFIG[@main][@sub]
+    render :partial => "edit_settings"
+  end
+  
+  def update_app_settings
+    if params[:main] == "fsoc" and params[:sub] == "mode"
+      if params[:value] == "summer_coding"
+        date_params = [ "pct_from", "pct_to", "pst_from", "pst_to", "pat_from",\
+        "pat_to", "csd_on", "met_from", "met_to", "ced_on", "fet_from", "fet_to" ]
+ 
+        date_params.each do |dp|
+          APP_CONFIG['timeframes'][dp] = DateTime::now 
+        end
+      else
+        APP_CONFIG['timeframes']['set'] = false
+      end   
+    end
+    APP_CONFIG[params[:main]][params[:sub]] = params[:value]
+    output = File.new("#{RAILS_ROOT}/config/app_settings.yml", 'w+')
+    output.puts YAML.dump(APP_CONFIG)
+    output.close
+    
+    flash[:notice] = 'Settings successfully updated'
+    redirect_to :controller => "dashboard"
   end
 end
