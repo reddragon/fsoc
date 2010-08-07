@@ -1,0 +1,57 @@
+- #--
+- #   Copyright (C) 2010 Gaurav Menghani <gaurav.menghani@gmail.com>
+- #
+- #   This program is free software: you can redistribute it and/or modify
+- #   it under the terms of the GNU Affero General Public License as published by
+- #   the Free Software Foundation, either version 3 of the License, or
+- #   (at your option) any later version.
+- #
+- #   This program is distributed in the hope that it will be useful,
+- #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+- #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- #   GNU Affero General Public License for more details.
+- #
+- #   You should have received a copy of the GNU Affero General Public License
+- #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+- #++
+
+= javascript_include_tag :defaults
+
+%div{:id => "project_student"}
+  %br
+  - if user.project
+    - if open
+      %h3
+        = link_to_remote image_tag('spindown-open.gif'), :update => "project_student", :url => {:action => "toggle_tab", :open => false, :partial => "project_student", :user_id => user.id}
+        = link_to_remote "#{user.login} is a student for project(s)", :update => "project_student", :url => {:action => "toggle_tab", :open => false, :partial => "project_student", :user_id => user.id}
+      %table{:id => "hor-minimalist-a"}
+      
+      %table{ :id => "hor-minimalist-a" }
+        %tr
+          %th
+            Name
+          %th
+            Mentor
+          %th
+            &nbsp;
+        %tr
+          %td
+            = link_to user.project.name, user.project
+          %td
+            = user.project.mentor ? link_to_user(user.project.mentor): "Nobody"
+          %td
+            - if can_edit_project?(user.project)
+              = link_to 'Edit', edit_project_path(user.project)
+
+            = ' | ' if can_edit_project?(user.project) && can_delete_project?(user.project)
+            - if can_delete_project?(user.project)
+              = link_to 'Delete', user.project, :confirm => 'Are you sure?', :method => :delete         
+
+    - else
+      %h3
+        = link_to_remote image_tag('spindown-closed.gif'), :update => "project_student", :url => {:action => "toggle_tab", :open => true, :partial => "project_student", :user_id => user.id}
+        = link_to_remote "#{user.login} is a student for project(s)", :update => "project_student", :url => {:action => "toggle_tab", :open => true, :partial => "project_student", :user_id => user.id}
+    
+  - else
+    %h3
+      Not student for any projects

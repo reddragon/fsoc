@@ -110,4 +110,10 @@ class UsersController < ApplicationController
       end
     end
   end
+  
+  def toggle_tab
+    user = User.find(params[:user_id])
+    render :partial => params[:partial], \
+      :locals => {:open => params[:open], :user => user}
+  end
 end

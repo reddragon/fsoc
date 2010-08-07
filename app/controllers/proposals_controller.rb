@@ -94,7 +94,7 @@ class ProposalsController < ApplicationController
     @student = @proposal.student
     dates_valid = true
     
-    if APP_CONFIG['fsoc']['mode'] == "year_round"
+    if APP_CONFIG['fsoc']['mode'] == "summer_coding"
       @tasks.each do |task|
         due_date = params["task_#{task.id}".to_sym]
         due_date = DateTime::civil(due_date[:year].to_i, due_date[:month].to_i, due_date[:day].to_i, 0, 0, 0)

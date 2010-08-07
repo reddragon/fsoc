@@ -1,0 +1,60 @@
+- #--
+- #   Copyright (C) 2010 Gaurav Menghani <gaurav.menghani@gmail.com>
+- #
+- #   This program is free software: you can redistribute it and/or modify
+- #   it under the terms of the GNU Affero General Public License as published by
+- #   the Free Software Foundation, either version 3 of the License, or
+- #   (at your option) any later version.
+- #
+- #   This program is distributed in the hope that it will be useful,
+- #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+- #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- #   GNU Affero General Public License for more details.
+- #
+- #   You should have received a copy of the GNU Affero General Public License
+- #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+- #++
+
+= javascript_include_tag :defaults
+
+%div{:id => "projects_mentored"}
+  - if !user.project_mentorships.empty?
+    %br
+    - if open
+      %h3
+        = link_to_remote image_tag('spindown-open.gif'), :update => "projects_mentored", :url => {:action => "toggle_tab", :open => false, :partial => "projects_mentored", :user_id => user.id}
+        = link_to_remote "Projects mentored by #{user.login}", :update => "projects_mentored", :url => {:action => "toggle_tab", :open => false, :partial => "projects_mentored", :user_id => user.id}
+      
+      %table{:id => "hor-minimalist-a"}
+        %tr
+          %th 
+            Name
+          %th
+            Proposed by
+          %th
+            &nbsp;  
+
+        - user.project_mentorships.each do |project|
+          %tr
+            %td
+              = link_to project.name, project
+            %td
+              = link_to_user project.proposer
+            %td
+              - if can_edit_project?(project)
+                = link_to 'Edit', edit_project_path(project)
+              = ' | ' if can_edit_project?(project) && can_delete_project?(project)
+              - if can_delete_project?(project)
+                = link_to 'Delete', project, :confirm => 'Are you sure?', :method => :delete
+          
+      %br
+        = render :partial => "proposals/list", :locals => { :proposals => user.proposal_mentorships }	
+    - else
+      %h3
+        = link_to_remote image_tag('spindown-closed.gif'),  :update => "projects_mentored", :url => {:action => "toggle_tab", :open => true, :partial => "projects_mentored", :user_id => user.id }
+        = link_to_remote "Projects mentored by #{user.login}",  :update => "projects_mentored", :url => {:action => "toggle_tab", :open => true, :partial => "projects_mentored", :user_id => user.id }
+    
+  - else
+    %h3
+      Not mentoring any projects
+

@@ -1,0 +1,31 @@
+- #--
+- #   Copyright (C) 2010 Gaurav Menghani <gaurav.menghani@gmail.com>
+- #
+- #   This program is free software: you can redistribute it and/or modify
+- #   it under the terms of the GNU Affero General Public License as published by
+- #   the Free Software Foundation, either version 3 of the License, or
+- #   (at your option) any later version.
+- #
+- #   This program is distributed in the hope that it will be useful,
+- #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+- #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- #   GNU Affero General Public License for more details.
+- #
+- #   You should have received a copy of the GNU Affero General Public License
+- #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+- #++
+
+%div{:id => "student_proposals"}
+  %br
+  - if !user.proposals.empty?
+    - if open
+      %h3
+        = link_to_remote image_tag('spindown-open.gif'), :update => "student_proposals", :url => {:action => "toggle_tab", :open => false, :partial => "student_proposals", :user_id => user.id}
+        = link_to_remote "Hide #{user.login}'s proposals for project(s)", :update => "student_proposals", :url => {:action => "toggle_tab", :open => false, :partial => "student_proposals", :user_id => user.id}
+      %br  
+      = render :partial => "proposals/list", :locals => { :proposals => user.proposals }
+        
+    - else
+      %h3
+        = link_to_remote image_tag('spindown-closed.gif'), :update => "student_proposals", :url => {:action => "toggle_tab", :open => true, :partial => "student_proposals", :user_id => user.id}
+        = link_to_remote "See #{user.login}'s proposals for project(s)", :update => "student_proposals", :url => {:action => "toggle_tab", :open => true, :partial => "student_proposals", :user_id => user.id}
