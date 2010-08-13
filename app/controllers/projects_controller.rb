@@ -131,6 +131,15 @@ class ProjectsController < ApplicationController
     if mentor? && !@project.mentor
       @project.mentor = current_user
       if @project.save
+        if current_user != @project.proposer
+          update = Update.new
+          update.user_id = @project.proposer.id
+          update.message = "#{current_user.login} is now mentoring the project
+            #{@project.name}."
+          update.link_string = 'See the project'
+          update.link = project_url(@project)
+          update.save
+        end  
         flash[:notice] = 'You are now mentoring this project.'
       else
         flash[:notice] = 'Unable to process the request'
@@ -146,6 +155,15 @@ class ProjectsController < ApplicationController
     if mentor? && @project.mentor == current_user && @project.students.empty?
       @project.mentor = nil
       if @project.save
+        if current_user != @project.proposer
+          update = Update.new
+          update.user_id = @project.proposer.id
+          update.message = "#{current_user.login} is no longer mentoring the project
+            #{@project.name}."
+          update.link_string = 'See the project'
+          update.link = project_url(@project)
+          update.save
+        end  
         flash[:notice] = 'You are no longer mentoring this project.'
       else
         flash[:notice] = 'Unable to process the request'

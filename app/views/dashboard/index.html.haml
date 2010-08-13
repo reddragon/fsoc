@@ -1,5 +1,5 @@
 -#--
--#   Copyright (C) 2010 Shreyank Gupta <sgupta@REDHAT.COM>
+-#   Copyright (C) 2010 Gaurav Menghani <gaurav.menghani@gmail.com>
 -#
 -#   This program is free software: you can redistribute it and/or modify
 -#   it under the terms of the GNU Affero General Public License as published by
@@ -37,171 +37,48 @@
         = link_to 'Signup', signup_path
         to get started.
     - else
-      %div{:id => 'dashboard_content'}
-        - if admin?
+      - if admin?
+        %div{:id => "update_form"}
           %h3
-            FSoC Settings 
-          %br
-          %h3
-            Program
+            = link_to_remote 'Send an Update', :update => "update_form", :url => { :action => "load_update_form" }
+          %br  
+      - if @updates.empty?
+        %h3
+          Currently there are no updates for you.
+      - else
+        - @updates.each do |update|
           %table{:id => 'hor-minimalist-a'}
             %tr
               %th
-                Setting
-              %th
-                Value
-              %th  
+                - if !update.user_group.nil? and !update.user_group.empty?
+                  Sent to
+                  = update.user_group.titleize
+                - else
+                  Sent to You
+                .rightfloat
+                  %small
+                    = distance_of_time_in_words(update.created_at, Time.now, true)
+                    back
             %tr
               %td
-                Name
-              %td
-                = APP_CONFIG['program']['name']
-              %td
-                = link_to_remote 'Edit', :update => "edit_program_name", :url => {:action => 'edit_app_settings', :main => "program", :sub => "name" }
-            %tr
-              %td
-                %div{:id => "edit_program_name"}    
-            %tr
-              %td
-                Name Abbreviation
-              %td
-                = APP_CONFIG['program']['name_abbreviation']
-              %td
-                = link_to_remote 'Edit', :update => "edit_program_name_abbreviation", :url => {:action => 'edit_app_settings', :main => "program", :sub => "name_abbreviation" }
-            %tr
-              %td
-                %div{:id => "edit_program_name_abbreviation"} 
-            %tr
-              %td
-                Edition
-              %td
-                = APP_CONFIG['program']['edition']
-              %td
-                = link_to_remote 'Edit', :update => "edit_program_edition", :url => {:action => 'edit_app_settings', :main => "program", :sub => "edition" }
-            %tr
-              %td
-                %div{:id => "edit_program_edition"}    
-                        
-          %br
-          %h3
-            Admin
-          %table{:id => 'hor-minimalist-a'}
-            %tr
-              %th
-                Setting
-              %th
-                Value
-              %th  
-            %tr
-              %td
-                Name
-              %td
-                = APP_CONFIG['admin']['name']
-              %td
-                = link_to_remote 'Edit', :update => "edit_admin_name", :url => {:action => 'edit_app_settings', :main => "admin", :sub => "name" }
-            %tr
-              %td
-                %div{:id => "edit_admin_name"} 
-            %tr
-              %td
-                Designation
-              %td
-                = APP_CONFIG['admin']['designation']
-              %td
-                = link_to_remote 'Edit', :update => "edit_admin_designation", :url => {:action => 'edit_app_settings', :main => "admin", :sub => "designation" }
-            %tr
-              %td
-                %div{:id => "edit_admin_designation"} 
-                
-          %br
-          %h3
-            FSoC
-          %table{:id => 'hor-minimalist-a'}
-            %tr
-              %th
-                Setting
-              %th
-                Value
-              %th  
-            %tr
-              %td
-                Mode
-              %td
-                = APP_CONFIG['fsoc']['mode']
-              %td
-                = link_to_remote 'Edit', :update => "edit_fsoc_mode", :url => {:action => 'edit_app_settings', :main => "fsoc", :sub => "mode" }
-            %tr
-              %td
-                %div{:id => "edit_fsoc_mode"}       
-          
-            
-        - if mentor?(current_user)
-          - if !current_user.project_mentorships.empty?
-            %h3
-              Projects mentored by
-              =h current_user.login
-            
-            %table{:id => "hor-minimalist-a"}
-              %tr
-                %th
-                  Name
-                %th
-                  Proposed by
-                %th
-                  &nbsp;  
-              - current_user.project_mentorships.each do |project|      
-                %tr
-                  %td
-                    = link_to project.name, project
-                  %td
-                    = link_to_user project.proposer
-                  %td
-                    - if can_edit_project?(project)
-                      = link_to 'Edit', edit_project_path(project)
-                    = ' | ' if can_edit_project?(project) && can_delete_project?(project)
-                    - if can_delete_project?(project)
-                      = link_to 'Delete', project, :confirm => 'Are you sure?', :method => :delete
-          - else
-            %h3
-              Not mentoring any projects.            
-        
-        - if student?(current_user)
-          %br
-          - if current_user.project
-            %h3 
-              =h current_user.login
-              is student for the project
-            %table{:id => "hor-minimalist-a"}
-              %tr
-                %th
-                  Name
-                %th
-                  Mentor
-              %tr
-                %td
-                  = link_to current_user.project.name, current_user.project
-                %td  
-                  = current_user.project.mentor ? link_to_user(current_user.project.mentor): "Nobody"        
-                %td
-                  - if can_edit_project?(current_user.project)
-                    = link_to 'Edit', edit_project_path(current_user.project)
-                  = ' | ' if can_edit_project?(current_user.project) && can_delete_project?(current_user.project)
-                  - if can_delete_project?(current_user.project)
-                    = link_to 'Delete', current_user.project, :confirm => 'Are you sure?', :method => :delete  
-                               
-          - else
-            %h3
-              Not a student for any projects                  
+                =h update.message
+                - if !update.link.nil? and !update.link.empty?  
+                  %br
+                  = link_to update.link_string, update.link
+
+      
       %p.links
         - if !admin?
-          = link_to 'My Projects', :controller => "dashboard"
+          = link_to 'My Projects', :controller => "dashboard", :action => "projects"
           &nbsp;|&nbsp;
           = link_to 'My Proposals', :controller => "dashboard", :action => "proposals"
           &nbsp;|&nbsp;
           = link_to 'Project Task Status', :controller => "dashboard", :action => "task_status"
         - if admin?
+          = link_to 'Application Settings', :controller => "dashboard", :action => "application_settings"
+          &nbsp;|&nbsp;
           - if can_configure?
             = link_to 'Configure Timeframes', :controller => "dashboard", :action => "configure"
             &nbsp;|&nbsp;
-          = link_to 'Certificates', :controller => "dashboard", :action => "certificates"
+          = link_to 'Certificate Settings', :controller => "dashboard", :action => "certificates"
 

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100627162649) do
+ActiveRecord::Schema.define(:version => 20100808133516) do
 
   create_table "comments", :force => true do |t|
     t.text     "content"
@@ -73,6 +73,16 @@ ActiveRecord::Schema.define(:version => 20100627162649) do
     t.integer  "proposal_id"
     t.date     "signoff_date"
     t.string   "status",       :default => "new"
+  end
+
+  create_table "updates", :force => true do |t|
+    t.string   "user_group"
+    t.integer  "user_id"
+    t.text     "message"
+    t.string   "link_string"
+    t.string   "link"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "users", :force => true do |t|

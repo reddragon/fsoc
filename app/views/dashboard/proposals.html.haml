@@ -26,9 +26,9 @@
     - if student?(current_user) && can_view_user_proposal_list?(current_user)
       %br
         = render :partial => "proposals/list", :locals => { :proposals => current_user.proposals }	  
-    %br
 
     - if !current_user.project_proposals.empty?
+      %br
       %h3
         Projects proposed by
         =h current_user.login
@@ -58,8 +58,8 @@
       %h3
         Have not proposed any projects
     %p.links
-      = link_to 'My Projects', :controller => "dashboard"
-      &nbsp;|&nbsp;
-      = link_to 'My Proposals', :controller => "dashboard", :action => "proposals"
+      = link_to 'Updates', :controller => "dashboard"
+      &nbsp;|&nbsp; 
+      = link_to 'My Projects', :controller => "dashboard", :action => "projects"
       &nbsp;|&nbsp;
       = link_to 'Project Task Status', :controller => "dashboard", :action => "task_status"

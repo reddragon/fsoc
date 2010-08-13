@@ -1,0 +1,86 @@
+-#--
+-#   Copyright (C) 2010 Gaurav Menghani <gaurav.menghani@gmail.com>
+-#
+-#   This program is free software: you can redistribute it and/or modify
+-#   it under the terms of the GNU Affero General Public License as published by
+-#   the Free Software Foundation, either version 3 of the License, or
+-#   (at your option) any later version.
+-#
+-#   This program is distributed in the hope that it will be useful,
+-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-#   GNU Affero General Public License for more details.
+-#
+-#   You should have received a copy of the GNU Affero General Public License
+-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-#++
+
+.post
+  %h2.title
+    My Projects
+  %p.meta
+    %span.date &nbsp;
+  %div{:style => 'clear: both'} &nbsp;
+  .entry
+    - if mentor?(current_user)
+      - if !current_user.project_mentorships.empty?
+        %h3
+          Projects mentored by
+          =h current_user.login
+            
+        %table{:id => "hor-minimalist-a"}
+          %tr
+            %th
+              Name
+            %th
+              Proposed by
+            %th
+              &nbsp;  
+          - current_user.project_mentorships.each do |project|      
+            %tr
+              %td
+                = link_to project.name, project
+              %td
+                = link_to_user project.proposer
+              %td
+                - if can_edit_project?(project)
+                  = link_to 'Edit', edit_project_path(project)
+                = ' | ' if can_edit_project?(project) && can_delete_project?(project)
+                - if can_delete_project?(project)
+                  = link_to 'Delete', project, :confirm => 'Are you sure?', :method => :delete
+      - else
+        %h3
+          Not mentoring any project.            
+    - if student?(current_user)
+      %br
+      - if current_user.project
+        %h3 
+          =h current_user.login
+          is student for the project
+        %table{:id => "hor-minimalist-a"}
+          %tr
+            %th
+              Name
+            %th
+              Mentor
+          %tr
+            %td
+              = link_to current_user.project.name, current_user.project
+            %td  
+              = current_user.project.mentor ? link_to_user(current_user.project.mentor): "Nobody"        
+            %td
+              - if can_edit_project?(current_user.project)
+                = link_to 'Edit', edit_project_path(current_user.project)
+              = ' | ' if can_edit_project?(current_user.project) && can_delete_project?(current_user.project)
+              - if can_delete_project?(current_user.project)
+                = link_to 'Delete', current_user.project, :confirm => 'Are you sure?', :method => :delete  
+                               
+      - else
+        %h3
+          Not a student for any project.                  
+    %p.links
+      = link_to 'Updates', :controller => "dashboard"
+      &nbsp;|&nbsp;
+      = link_to 'My Proposals', :controller => "dashboard", :action => "proposals"
+      &nbsp;|&nbsp;
+      = link_to 'Project Task Status', :controller => "dashboard", :action => "task_status"

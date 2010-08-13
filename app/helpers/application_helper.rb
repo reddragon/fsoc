@@ -92,10 +92,10 @@ module ApplicationHelper
   end
   
   def colored_task_status(task)
-    color_map = { "new" => "gray", "open" => "orange", "resolved" => "green" }
+    color_map = { "new" => "gray", "open" => "orange", "resolved" => "green", "signed_off" => "blue" } 
     if task.due_date != nil
       color = color_map[task.status]
-      if task.status != "resolved" && task.due_date < Date.today
+      if (task.status != "resolved" && task.status != "signed_off") && task.due_date < Date.today
         color = "red"
       end
       status = task.status

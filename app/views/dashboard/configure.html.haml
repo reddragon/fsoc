@@ -130,8 +130,8 @@
       = submit_tag  'Set Timeframes' 
       
 %p.links
-  - if admin?
-    - if can_configure?
-      = link_to 'Configure Timeframes', :controller => "dashboard", :action => "configure"
-      &nbsp;|&nbsp;
-    = link_to 'Certificates', :controller => "dashboard", :action => "certificates"
+  = link_to 'Updates', :controller => "dashboard"
+  &nbsp;|&nbsp;
+  = link_to 'Application Settings', :controller => "dashboard", :action => "application_settings"
+  &nbsp;|&nbsp;
+  = link_to 'Certificate Settings', :controller => "dashboard", :action => "certificates"

@@ -61,7 +61,7 @@
           - @projects_mentoring.each do |project|
             - if project.tasks.empty?
               - next
-            has_some_tasks = true  
+            - has_some_tasks = true  
             %h3
               = project.name
               &nbsp;(Mentor)
@@ -81,12 +81,15 @@
                     %td
                       = link_to task.title, project_task_path(task.project, task)
                     %td
-                      - if task.due_date == nil
-                        -
+                      - if task.due_date.nil?
+                        = "-"
                       - else
                         = link_to_user task.student
                     %td
-                      = task.due_date
+                      - if task.due_date.nil?
+                        = "-"
+                      - else
+                        = task.due_date
                     %td
                       = colored_task_status(task)                           
               %br                
@@ -95,7 +98,7 @@
           - @projects_only_proposed.each do |project|
             - if project.tasks.empty?
               - next
-            has_some_tasks = true   
+            - has_some_tasks = true   
             %h3
               = project.name
               &nbsp;(Proposer)
@@ -115,28 +118,26 @@
                     %td
                       = link_to task.title, project_task_path(task.project, task)
                     %td
-                      - if task.due_date == nil
-                        -
+                      - if task.due_date.nil?
+                        = "-"
                       - else
                         = link_to_user task.student
                     %td
-                      = task.due_date
+                      - if task.due_date.nil?
+                        = "-"
+                      - else
+                        = task.due_date
                     %td
                       = colored_task_status(task)                           
               %br
         - if !has_some_tasks
           %h3
-            You do not have any tasks linked to your projects.  
-    %br      
+            You do not have any tasks linked to your projects.      
       
     %p.links
-      - if !admin?
-        = link_to 'My Projects', :controller => "dashboard"
-        &nbsp;|&nbsp;
-        = link_to 'My Proposals', :controller => "dashboard", :action => "proposals"
-        &nbsp;|&nbsp;
-        = link_to 'Project Task Status', :controller => "dashboard", :action => "task_status"
-      - if admin?
-        = link_to 'Configure Timeframes', :controller => "dashboard", :action => "configure"
-        &nbsp;|&nbsp;
-        = link_to 'Certificates', :controller => "dashboard", :action => "certificates"
+      = link_to 'Updates', :controller => "dashboard"
+      &nbsp;|&nbsp;
+      = link_to 'My Projects', :controller => "dashboard"
+      &nbsp;|&nbsp;
+      = link_to 'My Proposals', :controller => "dashboard", :action => "proposals"
+      

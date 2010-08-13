@@ -18,6 +18,19 @@
 class DashboardController < ApplicationController
 
   def index
+    if logged_in?
+      if admin?
+        @updates = Update.find(:all, \
+          :conditions => ["user_id = ?", current_user.id], 
+          :order => "id DESC")
+      else
+        appropriate_group = "only_#{current_user.user_type}s"
+        @updates = Update.find(:all, \
+          :conditions => [ "user_id = ? OR user_group = 'everyone' OR user_group = ?", \
+            current_user.id, appropriate_group ],
+          :order => "id DESC")
+      end
+    end  
   end
   
   def dashboard_links
@@ -33,8 +46,6 @@ class DashboardController < ApplicationController
   def set_timeframes
     date_params = [ "pct_from", "pct_to", "pst_from", "pst_to", "pat_from",\
      "pat_to", "csd_on", "met_from", "met_to", "ced_on", "fet_from", "fet_to" ]
-    
-    app_settings = AppSetting.find(:all)
     
     date_params.each do |dp|
       date_array = params[dp.intern][0].split("-")
@@ -141,6 +152,9 @@ class DashboardController < ApplicationController
   end
   
   def proposals
+    if !logged_in?
+      redirect_to :controller => "dashboard"
+    end
   end
   
   def certificates
@@ -203,5 +217,46 @@ class DashboardController < ApplicationController
     
     flash[:notice] = 'Settings successfully updated'
     redirect_to :controller => "dashboard"
+  end
+  
+  def application_settings
+    if !admin?
+      flash[:notice] = 'You are not authorized to perform this action.'
+      redirect_to :controller => "dashboard", :action => "index"
+    end
+  end
+  
+  def projects
+    if !logged_in?
+      redirect_to :controller => "dashboard"
+    end  
+  end
+  
+  def load_update_form
+    @update = Update.new  
+    render :partial => "send_update"
+  end
+  
+  def send_update
+    if !logged_in?
+      flash[:notice] = 'You are not authorized to perform this action.'
+      redirect_to :controller => "dashboard", :action => "index"
+    end
+    #TODO 
+    #Replace the hash by a method that automatically does this.
+    underscore_hash = { "Everyone" => "everyone", \
+      "Only Mentors" => "only_mentors", "Only Students" => "only_students" }
+    
+    update = Update.new(params[:update])
+    update.user_group = underscore_hash[update.user_group]
+    update.user_id = -1;
+    if update.save
+      flash[:notice] = 'Update successfully sent to recipients'
+      puts update.message
+    else
+      flash[:notice] = 'Could not send the update.'
+    end
+    redirect_to :controller => "dashboard"
+      
   end
 end

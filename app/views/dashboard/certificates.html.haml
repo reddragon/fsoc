@@ -50,10 +50,11 @@
     %br  
     
     %p.links
-      - if admin?
-        - if can_configure?
-          = link_to 'Configure Timeframes', :controller => "dashboard", :action => "configure"
-          &nbsp;|&nbsp;
-        = link_to 'Certificates', :controller => "dashboard", :action => "certificates"
+      = link_to 'Updates', :controller => "dashboard"
+      &nbsp;|&nbsp; 
+      = link_to 'Application Settings', :controller => "dashboard", :action => "application_settings"
+      - if can_configure?
+        &nbsp;|&nbsp; 
+        = link_to 'Configure Timeframes', :controller => "dashboard", :action => "configure"
            
                  

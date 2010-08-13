@@ -48,6 +48,25 @@ class ProposalsController < ApplicationController
   def create
     @proposal = Proposal.new(params[:proposal])
     if @proposal.save
+      update = Update.new
+      update.user_id = @proposal.project.proposer.id
+      update.message = "#{current_user.login} has written a proposal for the project
+        #{@proposal.project.name}."
+      update.link_string = 'See the proposal'
+      update.link = project_proposal_url(@proposal.project, @proposal)
+      update.save
+      
+      if @proposal.project.proposer != @proposal.project.mentor
+        mentor_update = Update.new
+        mentor_update = Update.new
+        mentor_update.user_id = @proposal.project.mentor.id
+        mentor_update.message = "#{current_user.login} has written a proposal for the project
+          #{@proposal.project.name}."
+        mentor_update.link_string = 'See the proposal'
+        mentor_update.link = project_proposal_url(@proposal.project, @proposal)
+        mentor_update.save
+      end
+      
       flash[:notice] = 'Your proposal was successfully created.'
       redirect_to :action => 'show', :id => @proposal.id
     else
@@ -126,22 +145,49 @@ class ProposalsController < ApplicationController
         task_event.description = "Deadline for #{task.title}"
         task_event.save
         task.update_attributes(:due_date => due_date, :proposal => @proposal)
-      end
-      @student.proposals.each do |proposal|
-        if proposal == @proposal
-          status = 'accepted'
-          @subject = APP_CONFIG['program']['name_full']
-          @message = "Congratulations! You have been accepted for the project #{@proposal.project.name}!"
         
-          #Sends a mail to the student on acceptance.
-          #Remove if not required
-          Mail.deliver_message(@student.email, @subject, @message)
-        else
-          status = 'student_busy'
+        update = Update.new
+        update.user_id = @student.id
+        update.message = "The task #{task.title} is now allocated to you, 
+          and is due on #{due_date}"
+        update.link_string = "Open the task"
+        update.link = open_project_task_url(task.project, task) 
+        update.save
+      end
+      
+      #If more tasks are being allocated later in the project, no need
+      #to send the mails and the updates again.
+      if @student.project == @proposal.project
+        update = Update.new
+        update.user_id = @student.id
+        update.message = "You have been allocated more tasks in your project #{@proposal.project.name}. Please see the proposal page."
+        update.link_string = 'See your proposal'
+        update.link = project_proposal_url(@proposal.project, @proposal)
+        update.save
+      else
+        @student.proposals.each do |proposal|
+          if proposal == @proposal
+            status = 'accepted'
+            @subject = APP_CONFIG['program']['name_full']
+            @message = "Congratulations! You have been accepted for the project '#   {@proposal.project.name}'!"
+        
+            #Sends a mail to the student on acceptance.
+            #Remove if not required
+            Mail.deliver_message(@student.email, @subject, @message)
+          
+            update = Update.new
+            update.user_id = @student.id
+            update.message = @message
+            update.link_string = "See the project #{@proposal.project.name}!"
+            update.link = project_url(@proposal.project)
+            update.save
+            
+          else
+            status = 'student_busy'
+          end
+          proposal.update_attributes(:status => status)
         end
-        proposal.update_attributes(:status => status)
-      end
-        
+      end  
       flash[:notice] = 'Project tasks successfully allocated.'
       redirect_to @proposal.project
     end
@@ -154,11 +200,15 @@ class ProposalsController < ApplicationController
       
       @student = @proposal.student
       @subject = APP_CONFIG['program']['name_full']
-      @message = "We are sorry, we did not accept yor proposal for the project #{@proposal.project.name}!"
+      @message = "We are sorry, your proposal for the project '#{@proposal.project.name}' was not accepted."
           
       #Sends a mail to the student on acceptance.
       #Remove if not required
       Mail.deliver_message(@student.email, @subject, @message)
+      update = Update.new
+      update.user_id = @student.id
+      update.message = @message
+      update.save
       
       flash[:notice] = 'Proposal sucessfully rejected.'
     else

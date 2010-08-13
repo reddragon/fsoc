@@ -85,11 +85,20 @@ class TasksController < ApplicationController
   def unallocate
     @task = Task.find(params[:id])  
     if can_edit_task?(@task)
+      update = Update.new
+      update.user_id = @task.proposal.student.id
+      update.message = "The task '#{@task.title}' of the project #{@task.project.name}
+        is no longer allocated to you."
+      update.link_string = "See the task #{@task.title}"
+      update.link = project_task_url(@task.project, @task)
+      update.save
+      
       @task.update_attributes(:due_date => nil, :proposal => nil)
       task_events = Event.find(:all, :conditions => { :task_id => @task.id })
       task_events.each do |task_event|
         task_event.destroy
-      end  
+      end
+       
       flash[:notice] = 'Successfully unallocated task!'
     else    
       flash[:notice] = 'Cannot unallocate task!'  
@@ -101,6 +110,14 @@ class TasksController < ApplicationController
     @task = Task.find(params[:id])  
     if student_for_task?(@task)
       @task.update_attributes(:start_date => Date.today, :status => 'open')
+      
+      update = Update.new
+      update.user_id = @task.mentor.id
+      update.message = "#{@task.student.login} has opened the task '#{@task.title}' of the project #{@task.project.name}."
+      update.link_string = "See the task #{@task.title}"
+      update.link = project_task_url(@task.project, @task)
+      update.save
+      
       flash[:notice] = 'Successfully opened task!'    
     else
       flash[:notice] = 'Cannot open task!'  
@@ -112,6 +129,14 @@ class TasksController < ApplicationController
     @task = Task.find(params[:id])  
     if student_for_task?(@task)
       @task.update_attributes(:signoff_date => Date.today, :status => 'resolved')
+      
+      update = Update.new
+      update.user_id = @task.mentor.id
+      update.message = "#{@task.student.login} has resolved the task '#{@task.title}' of the project #{@task.project.name}."
+      update.link_string = "Signoff the task #{@task.title}"
+      update.link = signoff_project_task_url(@task.project, @task)
+      update.save
+      
       flash[:notice] = 'Successfully resolved task!'
     else
       flash[:notice] = 'Cannot resolve task!'  
@@ -123,25 +148,18 @@ class TasksController < ApplicationController
     @task = Task.find(params[:id])  
     if can_signoff_task?(@task)
       @task.update_attributes(:status => 'signed_off')
+      
+      update = Update.new
+      update.user_id = @task.student.id
+      update.message = "#{@task.mentor.login} has signed off the task '#{@task.title}' of the project #{@task.project.name}."
+      update.link_string = "See your proposal"
+      update.link = project_proposal_url(@task.project, @task.proposal)
+      update.save
+      
       flash[:notice] = 'Successfully signed-off task!'
     else
       flash[:notice] = 'Cannot signoff task!'  
     end
     redirect_to @task.project 
   end
-  
-  def delivermessage
-    @task = Task.find(params[:id])
-	if can_send_task_message?(@task)
-	  @message = params[:message]
-	  @subject = "Task #{@task.title} for the project #{@task.project.name}"
-	  Mail.deliver_message(@task.student.email, @subject, @message)
-	  flash[:notice] = "Message successfully delivered."
-	  redirect_to :project_task
-	else
-	  flash[:notice] = 'You are not authorized to perform this operation.'
-	  redirect_to @task
-	end
-  end
-
 end
