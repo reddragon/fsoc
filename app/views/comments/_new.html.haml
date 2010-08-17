@@ -19,7 +19,7 @@
   %br
   New Comment:
   %br
-- form_for comment, :url => {:action => :create, :project_id => comment.project.id} do |f|
+- form_for comment, :url => {:controller => 'comments', :action => :create, :project_id => comment.project.id} do |f|
   = f.error_messages
   = f.hidden_field :user_id, :value => current_user.id
   = f.hidden_field :project_id, :value => comment.project.id

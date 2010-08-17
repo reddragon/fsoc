@@ -174,4 +174,42 @@ class ProjectsController < ApplicationController
     redirect_to(@project)    
   end
   
+  def load_project_page_content
+    if params[:partial] == "edit"
+      @project = Project.find(params[:id])
+      local_vars = { :project => @project }
+    end
+    
+    if params[:partial] == "project"
+      @project = Project.find(params[:id])
+      @proposals = Array.new
+      if student?
+        @proposals = @project.proposals.find(:all, :conditions => {:student_id => current_user.id})
+      end
+      if can_view_proposal_list?(@project)
+        @proposals = @project.proposals
+      end
+      @tasks = @project.tasks    
+      local_vars = { :project => @project, :proposals => @proposals, \
+        :tasks => @project.tasks }
+    end
+    
+    if params[:partial] == "comments/show"
+      @project = Project.find(params[:id])
+      @comments = @project.comments
+      @form_comment = Comment.new
+      @form_comment.project = @project
+      local_vars = { :project => @project, :comments => @comments, \
+        :form_comment => @form_comment }
+    end
+    
+    render :partial => params[:partial], :locals => local_vars
+  end
+  
+  def show_tasks
+    @project = Project.find(params[:project_id])
+    @tasks = @project.tasks
+    render :partial => "show_tasks", :locals => {:project => @project, :tasks => @tasks, :open => params[:open] }
+  end
+  
 end

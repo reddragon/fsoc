@@ -15,22 +15,41 @@
 -#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -#++
 
-.post
-  %h2.title
-    Configure
-  %p.meta
-    %span.date &nbsp;
-  %div{:style => 'clear: both'} &nbsp;
-  .entry
+= javascript_include_tag :defaults
 
-%h3
-  FSoC is currently in
-  = APP_CONFIG['fsoc']['mode'].humanize.titleize
-  mode
+- if admin?
+  %ul{:id => "navlist"}
+    %li
+      = link_to_remote 'Updates', :update => "dashboard_content", :url => {:action => "load_dashboard_content", :partial => "updates" }
+      
+    %li
+      = link_to_remote 'Application Settings', :update => "dashboard_content", :url => {:action => "load_dashboard_content", :partial => "application_settings" }
+    
+    - if can_configure?  
+      %li{:id => 'active'}
+        = link_to_remote 'Configure Timeframes', :update => "dashboard_content", :url => {:action => "load_dashboard_content", :partial => "configure" }
+    
+    %li
+      = link_to_remote 'Certificates Settings', :update => "dashboard_content", :url => {:action => "load_dashboard_content", :partial => "certificates" }
+
   %br
-%br
 
-%br
+  .post
+    %h2.title
+      Configure
+    %p.meta
+      %span.date &nbsp;
+    %div{:style => 'clear: both'} &nbsp;
+    .entry
+
+  %h3
+    FSoC is currently in
+    = APP_CONFIG['fsoc']['mode'].humanize.titleize
+    mode
+  %br
+  %br
+
+  %br
   - if APP_CONFIG['fsoc']['mode'] == "summer_coding"
     - form_tag :action => "set_timeframes" do
       %h3
@@ -43,9 +62,9 @@
             To
         %tr
           %td
-            = text_field "pct_from", "", :value => APP_CONFIG['timeframes']['pct_from'].to_date
+            = select_date APP_CONFIG['timeframes']['pct_from'], :prefix => "pct_from"
           %td
-            = text_field "pct_to", "", :value => APP_CONFIG["timeframes"]["pct_to"].to_date      
+            = select_date APP_CONFIG["timeframes"]["pct_to"].to_date, :prefix => "pct_to"      
       %br
       %h3
         Proposal Submission Timeframe
@@ -57,9 +76,9 @@
             To
         %tr
           %td
-            = text_field "pst_from", "", :value => APP_CONFIG["timeframes"]["pst_from"].to_date
+            = select_date APP_CONFIG["timeframes"]["pst_from"], :prefix => "pst_from"
           %td
-            = text_field "pst_to", "", :value => APP_CONFIG["timeframes"]["pst_to"].to_date 
+            = select_date APP_CONFIG["timeframes"]["pst_to"], :prefix => "pst_to" 
       
       %br
       %h3
@@ -72,9 +91,9 @@
             To
         %tr
           %td
-            = text_field "pat_from", "", :value => APP_CONFIG["timeframes"]["pat_from"].to_date
+            = select_date APP_CONFIG["timeframes"]["pat_from"], :prefix => "pat_from"
           %td
-            = text_field "pat_to", "", :value => APP_CONFIG["timeframes"]["pat_to"].to_date
+            = select_date APP_CONFIG["timeframes"]["pat_to"], :prefix => "pat_to"
       %br
       
       %h3
@@ -85,7 +104,7 @@
             On  
         %tr
           %td
-            = text_field "csd_on", "", :value => APP_CONFIG["timeframes"]["csd_on"].to_date
+            = select_date APP_CONFIG["timeframes"]["csd_on"], :prefix => "csd_on"
       
       %br
       %h3
@@ -98,9 +117,9 @@
             To
         %tr
           %td
-            = text_field "met_from", "", :value => APP_CONFIG["timeframes"]["met_from"].to_date
+            = select_date APP_CONFIG["timeframes"]["met_from"], :prefix => "met_from"
           %td
-            = text_field "met_to", "", :value => APP_CONFIG["timeframes"]["met_to"].to_date 
+            = select_date APP_CONFIG["timeframes"]["met_to"], :prefix => "met_to" 
       
       %br
       %h3
@@ -111,7 +130,7 @@
             On
         %tr
           %td
-            = text_field "ced_on", "", :value => APP_CONFIG["timeframes"]["ced_on"].to_date
+            = select_date APP_CONFIG["timeframes"]["ced_on"], :prefix => "ced_on"
       %br
       %h3
         Final Evaluation Timeframe
@@ -123,15 +142,8 @@
             To
         %tr
           %td
-            = text_field "fet_from", "", :value => APP_CONFIG["timeframes"]["fet_from"].to_date
+            = select_date APP_CONFIG["timeframes"]["fet_from"], :prefix => "fet_from"
           %td
-            = text_field "fet_to", "", :value => APP_CONFIG["timeframes"]["fet_to"].to_date 
+            = select_date APP_CONFIG["timeframes"]["fet_to"], :prefix => "fet_to" 
       %br
       = submit_tag  'Set Timeframes' 
-      
-%p.links
-  = link_to 'Updates', :controller => "dashboard"
-  &nbsp;|&nbsp;
-  = link_to 'Application Settings', :controller => "dashboard", :action => "application_settings"
-  &nbsp;|&nbsp;
-  = link_to 'Certificate Settings', :controller => "dashboard", :action => "certificates"

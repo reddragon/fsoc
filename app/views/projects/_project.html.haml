@@ -1,0 +1,91 @@
+-#--
+-#   Copyright (C) 2010 Gaurav Menghani <gaurav.menghani@gmail.com>
+-#
+-#   This program is free software: you can redistribute it and/or modify
+-#   it under the terms of the GNU Affero General Public License as published by
+-#   the Free Software Foundation, either version 3 of the License, or
+-#   (at your option) any later version.
+-#
+-#   This program is distributed in the hope that it will be useful,
+-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-#   GNU Affero General Public License for more details.
+-#
+-#   You should have received a copy of the GNU Affero General Public License
+-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-#++
+
+
+%ul{:id => "navlist"}
+  %li{ :id => 'active' }
+    = link_to_remote 'Project', :update => "project_page_content", :url => {:action => "load_project_page_content", :partial => "project" }
+    
+  %li
+    = link_to_remote 'Edit Project', :update => "project_page_content", :url => {:action => "load_project_page_content", :partial => "edit", :id => params[:id] }
+    
+  %li
+    = link_to_remote 'Discuss', :update => "project_page_content", :url => {:action => "load_project_page_content", :partial => "comments/show", :id => params[:id] }  
+    
+%br
+ 
+.post
+  %h2.title
+    =h @project.name
+  %p.meta
+    %span.date &nbsp;
+  %div{:style => 'clear: both'} &nbsp;
+  .entry
+    %p
+      %b
+        Project Definition:
+      %br
+      =h @project.definition
+    
+    %p
+      %b
+        URLs:
+      %br
+      - for url in devide_link(@project.urls)
+        = url
+    
+    %p
+      %b
+        Mentor:
+      = @project.mentor ? link_to_user(@project.mentor): 'Nobody'
+      - if mentor?
+        = link_to '(Resign as Mentor)', resign_project_path(@project) if (@project.mentor == current_user && @project.students.empty?)
+        = link_to '(Volunteer as Mentor)', volunteer_project_path(@project) if !@project.mentor
+    
+    %p
+      %b
+        Proposed by:
+      = link_to_user @project.proposer
+    
+    %p
+      %b
+        Estimated Time:
+      =h @project.eta
+      days 
+    
+    %br
+    = render :partial => "show_tasks", :locals => { :open => false, :project => @project, :tasks => @tasks }
+    
+    %p{:class => "links" }
+      - if can_add_task?(@project)
+        = link_to 'Add task', new_project_task_path(@project) 
+        - if can_add_proposal?(@project)  
+          |
+      - if can_add_proposal?(@project)
+        = link_to 'Write a proposal', new_project_proposal_path(@project)    
+    
+    
+    %hr
+    %br
+    
+    - if can_view_proposal_list?(@project) || student? 
+      = render :partial => "proposals/list", :locals => { :proposals => @proposals }
+    - else
+      %h3
+        You are not authorised to view the proposals list
+  
+          

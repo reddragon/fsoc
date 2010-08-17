@@ -15,6 +15,21 @@
 -#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -#++
 
+- if admin?
+  %ul{:id => "navlist"}
+    %li
+      = link_to_remote 'Updates', :update => "dashboard_content", :url => {:action => "load_dashboard_content", :partial => "updates" }
+      
+    %li
+      = link_to_remote 'Application Settings', :update => "dashboard_content", :url => {:action => "load_dashboard_content", :partial => "application_settings" }
+    
+    - if can_configure?  
+      %li
+        = link_to_remote 'Configure Timeframes', :update => "dashboard_content", :url => {:action => "load_dashboard_content", :partial => "configure" }
+    
+    %li{:id => 'active'}
+      = link_to_remote 'Certificates Settings', :update => "dashboard_content", :url => {:action => "load_dashboard_content", :partial => "certificates" }
+
 .post
   %h2.title
     Certificates
@@ -25,7 +40,7 @@
     %h3
       Proposals awaiting Admin Sign off
     %br  
-    = render :partial => "proposals/list", :locals => {:proposals => @pending_proposals}
+    = render :partial => "proposals/list", :locals => {:proposals => pending_proposals}
     %br
     %br
     %h3

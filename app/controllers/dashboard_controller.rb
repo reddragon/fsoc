@@ -16,30 +16,19 @@
 #++
 
 class DashboardController < ApplicationController
-
   def index
-    if logged_in?
-      if admin?
-        @updates = Update.find(:all, \
-          :conditions => ["user_id = ?", current_user.id], 
-          :order => "id DESC")
-      else
+    if admin?
+      @updates = Update.find(:all, \
+        :conditions => ["user_id = ?", current_user.id], 
+        :order => "id DESC")
+    else
+      if logged_in?
         appropriate_group = "only_#{current_user.user_type}s"
         @updates = Update.find(:all, \
           :conditions => [ "user_id = ? OR user_group = 'everyone' OR user_group = ?", \
-            current_user.id, appropriate_group ],
+          current_user.id, appropriate_group ],
           :order => "id DESC")
       end
-    end  
-  end
-  
-  def dashboard_links
-    partial = params[:partial]
-    if partial == "dashboard"
-      render :partial => "dashboard/dashboard",\
-             :locals => {:user => current_user}
-    else
-      render :partial => "dashboard/" + partial
     end
   end
   
@@ -48,14 +37,17 @@ class DashboardController < ApplicationController
      "pat_to", "csd_on", "met_from", "met_to", "ced_on", "fet_from", "fet_to" ]
     
     date_params.each do |dp|
-      date_array = params[dp.intern][0].split("-")
-      if date_array.length != 3
-        flash[:notice] = "Invalid date input."
-        redirect_to :action => "configure", :validation_error => "true"
-        return
-      end
-      APP_CONFIG['timeframes'][dp] = DateTime::civil(date_array[0].to_i,\
-       date_array[1].to_i, date_array[2].to_i, 0, 0, 0) 
+      #date_array = params[dp.intern][0].split("-")
+      date_array = params[dp.intern]
+      
+      #if date_array.length != 3
+      #  flash[:notice] = "Invalid date input."
+      #  redirect_to :action => "configure", :validation_error => "true"
+      #  return
+      #end
+      #APP_CONFIG['timeframes'][dp] = DateTime::civil(date_array[0].to_i,\
+      # date_array[1].to_i, date_array[2].to_i, 0, 0, 0) 
+      APP_CONFIG['timeframes'][dp] = DateTime::civil(date_array[:year].to_i, date_array[:month].to_i, date_array[:day].to_i, 0, 0, 0)
     end
     
     #Set Calendar
@@ -71,7 +63,8 @@ class DashboardController < ApplicationController
     calendar_events.each do |e|
       if APP_CONFIG['timeframes'][e[:dates][0]] > APP_CONFIG['timeframes'][e[:dates][1]]
         flash[:notice] = "#{e[:name]} starting date is after ending date."
-        redirect_to :action => "configure", :validation_error => "true"
+        #TODO Make it load the configure page
+        redirect_to :action => "index", :validation_error => "true"
         return
       end
       
@@ -81,7 +74,8 @@ class DashboardController < ApplicationController
         else
           if APP_CONFIG['timeframes'][e[:dates][0]] < APP_CONFIG['timeframes'][f[:dates][0]] 
             flash[:notice] = "#{e[:name]} should not be before #{f[:name]}"
-            redirect_to :action => "configure", :validation_error => "true"
+            #TODO Make it load the configure page
+            redirect_to :action => "index", :validation_error => "true"
             return
           end  
         end
@@ -104,13 +98,15 @@ class DashboardController < ApplicationController
         new_event.end_at = APP_CONFIG['timeframes'][e[:dates][1]]
         new_event.task_id = -1
         if !new_event.save
+          #TODO Make it load the configure action
           flash[:notice] = "Could not set timeframes."
-          redirect_to :action => "configure"
+          redirect_to :action => "index"
         end
     end
     
     flash[:notice] = "Timeframes successfully set."
-    redirect_to :action => "configure"
+    #TODO Make it load the configure action
+    redirect_to :action => "index"
   end
   
   def configure
@@ -129,41 +125,6 @@ class DashboardController < ApplicationController
         end
       end
     end    
-  end
-  
-  def task_status
-    if !logged_in?
-      flash[:notice] = 'Please login to access this functionality'
-      redirect_to :controller => "dashboard"
-    else
-      if mentor?(current_user) || admin?(current_user)
-        #Is the set of projects which are being mentored, may have been proposed too
-        @projects_mentoring = current_user.project_mentorships
-        #Union of the proposed and mentored projects
-        @projects = (current_user.project_proposals + @projects_mentoring).uniq
-        #Is the set of projects which have only been proposed by the user, not mentored
-        @projects_only_proposed = @projects - current_user.project_mentorships
-      else 
-        if student?(current_user)
-          @projects = current_user.project
-        end
-      end    
-    end
-  end
-  
-  def proposals
-    if !logged_in?
-      redirect_to :controller => "dashboard"
-    end
-  end
-  
-  def certificates
-    if !admin?
-      flash[:notice] = 'You are not authorized to perform this action.'
-      redirect_to :controller => "dashboard"
-    end
-    @pending_proposals = Proposal.find(:all, \
-      :conditions => {:status => "admin_sign_off_pending"})
   end
   
   def upload_certificate_images
@@ -226,19 +187,13 @@ class DashboardController < ApplicationController
     end
   end
   
-  def projects
-    if !logged_in?
-      redirect_to :controller => "dashboard"
-    end  
-  end
-  
   def load_update_form
     @update = Update.new  
     render :partial => "send_update"
   end
   
   def send_update
-    if !logged_in?
+    if !admin?
       flash[:notice] = 'You are not authorized to perform this action.'
       redirect_to :controller => "dashboard", :action => "index"
     end
@@ -257,6 +212,59 @@ class DashboardController < ApplicationController
       flash[:notice] = 'Could not send the update.'
     end
     redirect_to :controller => "dashboard"
-      
   end
+  
+  def load_dashboard_content
+    if (params[:partial] == "configure" || \
+      params[:partial] == "application_settings" || \
+      params[:partial] == "certificates") && !admin?
+      
+      flash[:notice] = 'You are not authorized to perform this action.'
+      redirect_to :controller => "dashboard"
+    end
+    if params[:partial] == "updates"
+      if admin?
+        @updates = Update.find(:all, \
+          :conditions => ["user_id = ?", current_user.id], 
+          :order => "id DESC")
+      else
+        appropriate_group = "only_#{current_user.user_type}s"
+        @updates = Update.find(:all, \
+          :conditions => [ "user_id = ? OR user_group = 'everyone' OR user_group = ?", \
+          current_user.id, appropriate_group ],
+          :order => "id DESC")
+      end
+      puts @updates.empty?
+      render :partial => "updates", :locals => { :updates => @updates }
+    else
+      if params[:partial] == "certificates"
+        @pending_proposals = Proposal.find(:all, \
+          :conditions => {:status => "admin_sign_off_pending"})  
+        render :partial => "certificates", \
+          :locals => { :pending_proposals => @pending_proposals } 
+      else
+        if params[:partial] == "task_status"
+          if mentor?(current_user) || admin?(current_user)
+           #Is the set of projects which are being mentored, may have been proposed too
+           @projects_mentoring = current_user.project_mentorships
+           #Union of the proposed and mentored projects
+           @projects = (current_user.project_proposals + @projects_mentoring).uniq
+           #Is the set of projects which have only been proposed by the user, not mentored
+           @projects_only_proposed = @projects - current_user.project_mentorships
+           render :partial => "task_status", \
+             :locals => { :projects_mentoring => @projects_mentoring, \
+               :projects => @projects, \
+               :projects_only_proposed => @projects_only_proposed}
+          else 
+            @projects = current_user.project
+            render :partial => "task_status", \
+              :locals => { :projects => @projects }
+         end
+        else
+          render :partial => params[:partial]
+        end       
+      end  
+    end
+  end
+
 end

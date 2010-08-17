@@ -1,0 +1,83 @@
+-#--
+-#   Copyright (C) 2010 Gaurav Menghani <gaurav.menghani@gmail.com>
+-#
+-#   This program is free software: you can redistribute it and/or modify
+-#   it under the terms of the GNU Affero General Public License as published by
+-#   the Free Software Foundation, either version 3 of the License, or
+-#   (at your option) any later version.
+-#
+-#   This program is distributed in the hope that it will be useful,
+-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-#   GNU Affero General Public License for more details.
+-#
+-#   You should have received a copy of the GNU Affero General Public License
+-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-#++
+
+= javascript_include_tag :defaults
+
+- if admin?
+  %ul{:id => "navlist"}
+    %li{:id => 'active'}
+      = link_to_remote 'Updates', :update => "dashboard_content", :url => {:action => "load_dashboard_content", :partial => "updates", :update => "dashboard_content" }
+      
+    %li
+      = link_to_remote 'Application Settings', :update => "dashboard_content", :url => {:action => "load_dashboard_content", :partial => "application_settings", :update => "dashboard_content" }
+    
+    - if can_configure?  
+      %li
+        = link_to_remote 'Configure Timeframes', :update => "dashboard_content", :url => {:action => "load_dashboard_content", :partial => "configure", :update => "dashboard_content" }
+    
+    %li
+      = link_to_remote 'Certificates Settings', :update => "dashboard_content", :url => {:action => "load_dashboard_content", :partial => "certificates", :update => "dashboard_content" }
+- else
+  %ul{:id => "navlist"}
+    %li{:id => 'active'}
+      = link_to_remote 'Updates', :update => "dashboard_content", :url => {:action => "load_dashboard_content", :partial => "updates", :update => "dashboard_content" }
+    %li
+      = link_to_remote 'My Projects', :update => "dashboard_content", :url => {:action => "load_dashboard_content", :partial => "projects", :update => "dashboard_content" }
+    %li
+      = link_to_remote 'My Proposals', :update => "dashboard_content", :url => {:action => "load_dashboard_content", :partial => "proposals", :update => "dashboard_content" }
+    %li
+      = link_to_remote 'Project Task Status', :update => "dashboard_content", :url => {:action => "load_dashboard_content", :partial => "task_status", :update => "dashboard_content" }
+
+%br
+    
+.post
+  %h2.title
+    Updates
+  %p.meta
+    %span.date &nbsp;
+  %div{:style => 'clear: both'} &nbsp;
+  .entry
+    - if admin?
+      %div{:id => "update_form"}
+        %h3
+          = link_to_remote 'Send an Update', :update => "update_form", :url => { :action => "load_update_form" }
+        %br  
+    - if updates.empty?
+      %h3
+        Currently there are no updates for you.
+    - else
+      - updates.each do |update|
+        %table{:id => 'hor-minimalist-a'}
+          %tr
+            %th
+              - if !update.user_group.nil? and !update.user_group.empty?
+                Sent to
+                = update.user_group.titleize
+              - else
+                Sent to You
+              .rightfloat
+                %small
+                  = distance_of_time_in_words(update.created_at, Time.now, true)
+                  back
+          %tr
+            %td
+              =h update.message
+              - if !update.link.nil? and !update.link.empty?  
+                %br
+                = link_to update.link_string, update.link
+  
+
