@@ -22,7 +22,15 @@
 	<p class="meta"><span class="date">&nbsp;</span></p>
 	<div style="clear: both;">&nbsp;</div>
 	<div class="entry">
-    <% @user.password = @user.password_confirmation = nil %>
+    <% @user.password = @user.password_confirmation = nil %>	
+    <% if !APP_CONFIG['auth'].nil? and !APP_CONFIG['auth']['module'].nil? %>
+      <small>If you need to change your password, please change it at
+        <a href = <%= "#{((APP_CONFIG['auth']['module'] + "::AccountSystemUri").classify).constantize}" %> > 
+          <%= APP_CONFIG['auth']['module'].humanize.titleize  %> 
+        </a></small>
+      <% @user.password = @user.password_confirmation = 'blahhh' %>  
+    <% end %>	
+    
 
     <%= error_messages_for :user %>
     <% form_for (@user) do |f| -%>
@@ -45,14 +53,22 @@
     <%= f.text_field :org %></p>       
         
     <p>About me:<br/>
-    <%= f.text_area :bio %></p>       
+    <%= f.text_area :bio %></p>
+    
+    <% if !APP_CONFIG['auth'].nil? and !APP_CONFIG['auth']['module'].nil? %>
+      <% # The password in side the database is not used if an
+         # external account system is being used.
+      %>   
+      <%= f.hidden_field :password %>
+      <%= f.hidden_field :password_confirmation %>
+    <% else %>
+      <p><%= label_tag 'password' %><br/>
+      <%= f.password_field :password %></p>
 
-    <p><%= label_tag 'password' %><br/>
-    <%= f.password_field :password %></p>
-
-    <p><%= label_tag 'password_confirmation', 'Confirm Password' %><br/>
-    <%= f.password_field :password_confirmation %></p>
-
+      <p><%= label_tag 'password_confirmation', 'Confirm Password' %><br/>
+      <%= f.password_field :password_confirmation %></p>
+    <% end %>	       
+    
     <p><%= submit_tag 'Save Changes' %></p>
     <% end -%>
 	</div>

@@ -1,0 +1,92 @@
+Four Seasons of Code (FSoC) Setup
+---------------------------------
+(Date: August 19, 2010)
+
+Four Seasons of Code (FSoC) is a student project management system. For more,
+read the ABOUT file.
+
+This document will take you through the FSoC setup procedure.
+
+I used Rails 2.3.5 to work on FSoC. I assume you have a working Ruby-on-Rails
+2.3.5 setup.
+
+1. Change your present working directory to the FSoC directory. Use the shell
+while being in this directory only for the rest of the setup.
+
+2. FSoC uses several gems. Execute the command 'rake gems:install' 
+(quotes for clarity) from your shell  to install them.
+
+3. To create the database, execute the command 'rake db:migrate' from your
+shell.
+
+4. FSoC sends automatic mail reminders to students and mentors regarding 
+overdue tasks. For this, we need cron jobs. For this to happen, you have to 
+set up the crontab. In the development environment, execute:
+'whenever --update-crontab fsoc --set environment=development'.
+
+If you are deploying the application, execute:
+'whenever --update-crontab fsoc --set environment=production'
+
+5. From the shell, execute the command 'script/server'. This should get the
+server running.
+
+6. In the environment.rb file (inside the config directory), make changes on 
+line numbers 54, 55, 58, 61, 62, 65 and 66 to make the appropriate email
+settings.
+
+7. FSoC lets you authenticate via an external account system. FSoC requires
+that users should be registered with it as well. What this implies is, the
+users can use the username-password combination that they have at the external
+account system, but they have to provide other details to FSoC. To enable the
+use of an external account system, open the app_settings.yml file in the config
+directory. (If you do not want an external account system, skip this step.)
+
+Append the following text to the end of the file:
+auth:
+  module: ext_auth_module_name
+
+Where ext_auth_module_name is the name of the external authentication module that 
+you will have to create, in lower case and with underscores in place of spaces. 
+The module will have to be created in the lib directory, with the file name as
+'ext_auth_module_name.rb' (quotes for clarity). Inside you need to define
+the module with the name as 'ExtAuthModuleName'. 
+
+The module must have the authenticated_externally method, which takes in two 
+arguments, username and password (in that order), and returns true if the pair
+is valid and false otherwise. It should also define the constant string
+AccountSystemUri, which contains the address of the account system home page.
+
+FSoC comes bundled with the fedora_account_system.rb file in the lib directory.
+Check that out.
+
+IMPORTANT: Once the application is using an external account system, switching
+back to FSoC's own account system will leave the user database in an inconsistent
+state. So, please think before making the choice.
+
+8. Now start the server. This can be done by executing the command 
+'script/server' in the shell. 
+
+9. Open 'http://localhost:3000' in your browser. If all is well, the FSoC
+Welcome page should open up.
+
+10. The administrator should proceed to the 'Signup' page, and should be the 
+first one to signup.
+
+11. Login as the admin. You would be redirected to your dashboard. Click on
+the 'Application Settings' tab. You will see all the settings that can be
+tweaked. All the settings are pretty much self explanatory. The FSoC mode can
+be set to one of the two values, 'year_round' or 'summer_coding'. 
+
+If you choose 'year_round', then there is no concept of deadlines or timeframes 
+in any activity pertaining to the program, like writing proposals, submitting
+proposals etc. Whereas, if you choose 'summer_coding', you as an admin configure
+timeframes pertaining to each activity. 
+
+12. If you have chosen the year_round mode, ignore this step. If you have chosen
+the summer_coding mode, a new tab titled 'Configure Timeframes' would have now
+appeared in the dashboard tabs. 
+
+Click on this tab, and set the timeframes as appropriate for you.
+
+13. That's all, you are done!
+

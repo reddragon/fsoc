@@ -50,11 +50,11 @@ Rails::Initializer.run do |config|
   config.action_mailer.delivery_method = :smtp
   
   config.action_mailer.smtp_settings = {
-    #Remove this line if TLS is not being used
+    #Remove the following line if TLS is not being used
     :enable_starttls_auto => true,
     :address  => "smtp.gmail.com",
     
-    #Set port appropriately
+    #Set port appropriately. For TLS it is 587
     :port     => 587,
     
     #Set domain appropriately

@@ -53,7 +53,7 @@
           %td
             Name
           %td
-            = APP_CONFIG['program']['name']
+            =h APP_CONFIG['program']['name']
           %td
             = link_to_remote image_tag('edit_icon.jpg'), :update => "edit_program_name", :url => {:action => 'edit_app_settings', :main => "program", :sub => "name" }
         %tr
@@ -73,7 +73,7 @@
           %td
             Edition
           %td
-            = APP_CONFIG['program']['edition']
+            =h APP_CONFIG['program']['edition']
           %td
             = link_to_remote image_tag('edit_icon.jpg'), :update => "edit_program_edition", :url => {:action => 'edit_app_settings', :main => "program", :sub => "edition" }
         %tr
@@ -95,7 +95,7 @@
           %td
             Name
           %td
-            = APP_CONFIG['admin']['name']
+            =h APP_CONFIG['admin']['name']
           %td
             = link_to_remote image_tag('edit_icon.jpg'), :update => "edit_admin_name", :url => {:action => 'edit_app_settings', :main => "admin", :sub => "name" }
         %tr
@@ -105,7 +105,7 @@
           %td
             Designation
           %td
-            = APP_CONFIG['admin']['designation']
+            =h APP_CONFIG['admin']['designation']
           %td
             = link_to_remote image_tag('edit_icon.jpg'), :update => "edit_admin_designation", :url => {:action => 'edit_app_settings', :main => "admin", :sub => "designation" }
         %tr
@@ -126,7 +126,7 @@
             %td
               Mode
             %td
-              = APP_CONFIG['fsoc']['mode']
+              =h APP_CONFIG['fsoc']['mode'].humanize.titleize
             %td
               = link_to_remote image_tag('edit_icon.jpg'), :update => "edit_fsoc_mode", :url => {:action => 'edit_app_settings', :main => "fsoc", :sub => "mode" }
           %tr

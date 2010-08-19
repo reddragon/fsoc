@@ -23,6 +23,9 @@
 %tr
   %td
     - form_tag(:action => "update_app_settings", :main => @main, :sub => @sub) do
-      = text_field_tag "value", APP_CONFIG[@main][@sub]
+      - if @main == 'fsoc' && @sub == 'mode'
+        = select_tag "value", options_for_select([['Year Round', 'year_round'], ['Summer Coding', 'summer_coding']], [ APP_CONFIG[@main][@sub] ])
+      - else
+        = text_field_tag "value", APP_CONFIG[@main][@sub]
       &nbsp;
       = submit_tag 'Update'

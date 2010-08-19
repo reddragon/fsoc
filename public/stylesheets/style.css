@@ -291,6 +291,7 @@ a:hover {
   background-color: #D8E7FE;
   -moz-border-radius: .5em;
   -webkit-border-radius: .5em;  
+  border-radius: .5em; /* For Opera */
 }
 
 .links a:hover {
