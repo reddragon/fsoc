@@ -1,4 +1,6 @@
 --- 
+auth: 
+  module: 
 timeframes: 
   set: false
 admin: 

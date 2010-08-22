@@ -15,10 +15,10 @@ ul#navlist li
   background-color: #4d84df;
   margin: 2px 2px 0 2px;
   border: 1px solid #32639A;
-  -moz-border-top-left-radius: .5em;
+  -moz-border-radius-topleft: .5em;
   -webkit-border-top-left-radius: .5em;
   border-top-left-radius: .5em;
-  -moz-border-top-right-radius: .5em;
+  -moz-border-radius-topright: .5em;
   -webkit-border-top-right-radius: .5em;
   border-top-right-radius: .5em;
 }

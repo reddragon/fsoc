@@ -53,32 +53,28 @@
           %td
             Name
           %td
-            =h APP_CONFIG['program']['name']
+            %div{:id => "edit_program_name"} 
+              =h APP_CONFIG['program']['name']
           %td
             = link_to_remote image_tag('edit_icon.jpg'), :update => "edit_program_name", :url => {:action => 'edit_app_settings', :main => "program", :sub => "name" }
-        %tr
-          %td
-            %div{:id => "edit_program_name"}    
+               
         %tr
           %td
             Name Abbreviation
           %td
-            = APP_CONFIG['program']['name_abbreviation']
+            %div{:id => "edit_program_name_abbreviation"} 
+              = APP_CONFIG['program']['name_abbreviation']
           %td
             = link_to_remote image_tag('edit_icon.jpg'), :update => "edit_program_name_abbreviation", :url => {:action => 'edit_app_settings', :main => "program", :sub => "name_abbreviation" }
-        %tr
-          %td
-            %div{:id => "edit_program_name_abbreviation"} 
+            
         %tr
           %td
             Edition
           %td
-            =h APP_CONFIG['program']['edition']
+            %div{:id => "edit_program_edition"} 
+              =h APP_CONFIG['program']['edition']
           %td
             = link_to_remote image_tag('edit_icon.jpg'), :update => "edit_program_edition", :url => {:action => 'edit_app_settings', :main => "program", :sub => "edition" }
-        %tr
-          %td
-            %div{:id => "edit_program_edition"}    
                         
       %br
         %h3
@@ -95,22 +91,19 @@
           %td
             Name
           %td
-            =h APP_CONFIG['admin']['name']
+            %div{:id => "edit_admin_name"} 
+              =h APP_CONFIG['admin']['name']
           %td
             = link_to_remote image_tag('edit_icon.jpg'), :update => "edit_admin_name", :url => {:action => 'edit_app_settings', :main => "admin", :sub => "name" }
-        %tr
-          %td
-            %div{:id => "edit_admin_name"} 
+        
         %tr
           %td
             Designation
           %td
-            =h APP_CONFIG['admin']['designation']
+            %div{:id => "edit_admin_designation"}
+              =h APP_CONFIG['admin']['designation']
           %td
-            = link_to_remote image_tag('edit_icon.jpg'), :update => "edit_admin_designation", :url => {:action => 'edit_app_settings', :main => "admin", :sub => "designation" }
-        %tr
-          %td
-            %div{:id => "edit_admin_designation"} 
+            = link_to_remote image_tag('edit_icon.jpg'), :update => "edit_admin_designation", :url => {:action => 'edit_app_settings', :main => "admin", :sub => "designation" }           
                 
       %br
         %h3
@@ -126,10 +119,47 @@
             %td
               Mode
             %td
-              =h APP_CONFIG['fsoc']['mode'].humanize.titleize
+              %div{:id => "edit_fsoc_mode"}
+                =h APP_CONFIG['fsoc']['mode'].humanize.titleize
             %td
               = link_to_remote image_tag('edit_icon.jpg'), :update => "edit_fsoc_mode", :url => {:action => 'edit_app_settings', :main => "fsoc", :sub => "mode" }
+              
+
+      %br
+        %h3
+          External Authentication
+        %table{:id => 'hor-minimalist-a'}
+          %tr
+            %th
+              Module Name
+            %th
+            %th  
           %tr
             %td
-              %div{:id => "edit_fsoc_mode"}
+              %div{:id => "edit_auth"}
+                - if APP_CONFIG['auth'].nil? || APP_CONFIG['auth']['module'].nil? || APP_CONFIG['auth']['module'].empty?
+                  %small
+                    External Authentication is disabled.
+                - else
+                  =h APP_CONFIG['auth']['module'].camelize
+            %td
+            %td
+              = link_to_remote image_tag('edit_icon.jpg'), :update => "edit_auth", :url => {:action => 'edit_app_settings', :main => "auth", :sub => "module" }
+      
+      
+      %br
+        %h3
+          'About' Text
+        %table{:id => 'hor-minimalist-a'}
+          %tr
+            %th
+              Contents
+            %th  
+          %tr
+            %td
+              %div{ :id => "edit_about_text" }
+                =h truncate(@content, 50)
+            %td
+              = link_to_remote image_tag('edit_icon.jpg'), :update => "edit_about_text", :url => {:action => 'edit_app_settings', :main => "about", :sub => "text" }
+              
     

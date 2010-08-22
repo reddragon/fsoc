@@ -130,14 +130,15 @@ class DashboardController < ApplicationController
   def upload_certificate_images
     if admin?
       if !params[:uploadlogo].nil?
-        file_upload(params[:uploadlogo], "public/images/certificate", params[:logo_name], 'logo')
+        file_upload(params[:uploadlogo], \
+          "#{RAILS_ROOT}/public/images/certificate", params[:logo_name], 'logo')
       end
       
       if !params[:uploadwatermark].nil?
         file_upload(params[:uploadwatermark], "public/images/certificate", params[:watermark_name], 'watermark')
       end
       flash[:notice] = 'Images uploaded sucessfully.'
-      redirect_to :controller => "dashboard", :action => "certificates"
+      redirect_to :controller => "dashboard"
     else
       flash[:notice] = 'You are not authorized to perform this action.'
       redirect_to :controller => "dashboard"
@@ -148,21 +149,35 @@ class DashboardController < ApplicationController
     # create the file path
     path = File.join(directory, name)
     # write the file
-    File.open(path, "wb") { |f| f.write(upload[operand].read) }
+    file = File.new(path, 'w+')
+    file.write(upload[operand].read) 
+    file.close
   end
   
   def edit_app_settings
     @main = params[:main]
     @sub = params[:sub]
-    @value = APP_CONFIG[@main][@sub]
+    if @main == "about" && @sub == "text"
+      @value = File.read("#{RAILS_ROOT}/public/About.txt")
+    else
+      if params[:main] == 'auth' && params[:sub] == 'module' 
+        if APP_CONFIG['auth'].nil? || APP_CONFIG['auth']['module'].nil?
+          @value = ''
+        else
+          @value = APP_CONFIG[@main][@sub].camelize
+        end    
+      else
+        @value = APP_CONFIG[@main][@sub]
+      end
+    end
     render :partial => "edit_settings"
   end
   
   def update_app_settings
-    if params[:main] == "fsoc" and params[:sub] == "mode"
-      if params[:value] == "summer_coding"
-        date_params = [ "pct_from", "pct_to", "pst_from", "pst_to", "pat_from",\
-        "pat_to", "csd_on", "met_from", "met_to", "ced_on", "fet_from", "fet_to" ]
+    if params[:main] == 'fsoc' and params[:sub] == 'mode'
+      if params[:value] == 'summer_coding'
+        date_params = [ 'pct_from', 'pct_to', 'pst_from', 'pst_to', 'pat_from',\
+        'pat_to', 'csd_on', 'met_from', 'met_to', 'ced_on', 'fet_from', 'fet_to' ]
  
         date_params.each do |dp|
           APP_CONFIG['timeframes'][dp] = DateTime::now 
@@ -171,13 +186,30 @@ class DashboardController < ApplicationController
         APP_CONFIG['timeframes']['set'] = false
       end   
     end
-    APP_CONFIG[params[:main]][params[:sub]] = params[:value]
-    output = File.new("#{RAILS_ROOT}/config/app_settings.yml", 'w+')
-    output.puts YAML.dump(APP_CONFIG)
-    output.close
     
-    flash[:notice] = 'Settings successfully updated'
-    redirect_to :controller => "dashboard"
+    if params[:value].nil?
+      flash[:notice] = 'Settings were not updated, since the field was nil'
+      redirect_to :controller => "dashboard"
+    else
+      if params[:main] == 'auth' && params[:sub] == 'module'
+        params[:value] = params[:value].underscore
+      end
+      
+      if params[:main] == 'about' && params[:sub] == 'text'
+        output = File.new("#{RAILS_ROOT}/public/About.txt", 'w+')
+        output.puts params[:value]
+        output.close
+      else
+        puts params[:main]
+        puts params[:sub]
+        APP_CONFIG[params[:main]][params[:sub]] = params[:value]
+        output = File.new("#{RAILS_ROOT}/config/app_settings.yml", 'w+')
+        output.puts YAML.dump(APP_CONFIG)
+        output.close
+      end
+      flash[:notice] = 'Settings successfully updated'
+      redirect_to :controller => "dashboard"
+   end   
   end
   
   def application_settings
@@ -261,7 +293,13 @@ class DashboardController < ApplicationController
               :locals => { :projects => @projects }
          end
         else
-          render :partial => params[:partial]
+          if params[:partial] == "application_settings"
+            @content = File.read("#{RAILS_ROOT}/public/About.txt")
+            render :partial => "application_settings", \
+              :locals => { :content => @content }
+          else
+            render :partial => params[:partial]
+          end  
         end       
       end  
     end

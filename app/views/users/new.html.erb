@@ -23,7 +23,8 @@
 	<div style="clear: both;">&nbsp;</div>
 	<div class="entry">
     <% @user.password = @user.password_confirmation = nil %>
-     <% if !APP_CONFIG['auth'].nil? and !APP_CONFIG['auth']['module'].nil? %>
+     <% if !APP_CONFIG['auth'].nil? and !APP_CONFIG['auth']['module'].nil? and \
+          !APP_CONFIG['auth']['module'].empty? %>
       <small>Please first register with
         <a href = <%= "#{((APP_CONFIG['auth']['module'] + "::AccountSystemUri").classify).constantize}" %> > 
           <%= APP_CONFIG['auth']['module'].humanize.titleize  %> 

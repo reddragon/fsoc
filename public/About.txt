@@ -1,5 +1,4 @@
-IMPORTANT: Replace this text (/public/About.txt) with something that describes
-your coding program.
+IMPORTANT: Replace this text with something that describes your coding program..
 
 Four Seasons of Code or, FSoC is a project tracking and management application.
 

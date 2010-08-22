@@ -71,7 +71,7 @@ class ProposalsController < ApplicationController
       redirect_to :action => 'show', :id => @proposal.id
     else
       flash[:notice] = 'Could not create your proposal'    
-      render :action => "new"
+      render_to project_path(@proposal.project)
     end
   end
 

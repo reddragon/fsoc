@@ -14,18 +14,17 @@
 - #   You should have received a copy of the GNU Affero General Public License
 - #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 - #++
-
+  
 %tr
   %td
-    %b
-      Edit
-      = @sub.titleize   
-%tr
-  %td
-    - form_tag(:action => "update_app_settings", :main => @main, :sub => @sub) do
+    - form_tag(:action => 'update_app_settings', :main => @main, :sub => @sub) do
       - if @main == 'fsoc' && @sub == 'mode'
-        = select_tag "value", options_for_select([['Year Round', 'year_round'], ['Summer Coding', 'summer_coding']], [ APP_CONFIG[@main][@sub] ])
+        = select_tag 'value', options_for_select([['Year Round', 'year_round'], ['Summer Coding', 'summer_coding']], @value)
       - else
-        = text_field_tag "value", APP_CONFIG[@main][@sub]
+        - if @main == 'about' && @sub == 'text'
+          = text_area_tag 'value', @value, :rows => 25, :cols => 50
+          %br  
+        - else
+          = text_field_tag 'value', @value
       &nbsp;
       = submit_tag 'Update'

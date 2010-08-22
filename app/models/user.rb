@@ -21,7 +21,8 @@ class User < ActiveRecord::Base
   include Authentication
   include Authentication::ByPassword
   include Authentication::ByCookieToken
-  if !APP_CONFIG['auth'].nil? and !APP_CONFIG['auth']['module'].nil?
+  if !APP_CONFIG['auth'].nil? and !APP_CONFIG['auth']['module'].nil? \
+    and !APP_CONFIG['auth']['module'].empty?
     include APP_CONFIG['auth']['module'].classify.constantize()
   end
   validates_presence_of     :login
@@ -64,7 +65,8 @@ class User < ActiveRecord::Base
   def self.authenticate(login, password)
     return nil if login.blank? || password.blank?
     u = find_by_login(login.downcase) # need to get the salt
-    if !APP_CONFIG['auth'].nil? and !APP_CONFIG['auth']['module'].nil?
+    if !APP_CONFIG['auth'].nil? and !APP_CONFIG['auth']['module'].nil? and \
+      !APP_CONFIG['auth']['module'].empty?
       #response = current_user.login
       u && u.authenticated_externally?(login, password) ? u : nil
     else

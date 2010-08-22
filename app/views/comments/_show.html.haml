@@ -21,8 +21,9 @@
   %li
     = link_to_remote 'Project', :update => "project_page_content", :url => {:action => "load_project_page_content", :partial => "project", :id => params[:id]  }
     
-  %li
-    = link_to_remote 'Edit Project', :update => "project_page_content", :url => {:action => "load_project_page_content", :partial => "edit", :id => params[:id] }
+  - if can_edit_project?(@project)
+    %li
+      = link_to_remote 'Edit Project', :update => "project_page_content", :url => {:action => "load_project_page_content", :partial => "edit", :id => params[:id] }
     
   %li{ :id => 'active' }
     = link_to_remote 'Discuss', :update => "project_page_content", :url => {:action => "load_project_page_content", :partial => "comments/show", :id => params[:id] }  

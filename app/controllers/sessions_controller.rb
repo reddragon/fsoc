@@ -17,7 +17,8 @@
 
 # This controller handles the login/logout function of the site.  
 class SessionsController < ApplicationController
-  if !APP_CONFIG['auth'].nil? and !APP_CONFIG['auth']['module'].nil?
+  if !APP_CONFIG['auth'].nil? and !APP_CONFIG['auth']['module'].nil? \
+    and !APP_CONFIG['auth']['module'].empty?
     include APP_CONFIG['auth']['module'].classify.constantize()
   end
   def new

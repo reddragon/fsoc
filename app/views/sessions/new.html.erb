@@ -25,7 +25,7 @@
 
     <p style="color: red"><%= flash[:error] %></p>
     <% form_tag session_path do -%>
-    <% if !APP_CONFIG['auth'].nil? and !APP_CONFIG['auth']['module'].nil? %>
+    <% if !APP_CONFIG['auth'].nil? and !APP_CONFIG['auth']['module'].nil? and !APP_CONFIG['auth']['module'].empty? %>
       <small>Please use your
         <a href = <%= "#{((APP_CONFIG['auth']['module'] + "::AccountSystemUri").classify).constantize}" %> > 
           <%= APP_CONFIG['auth']['module'].humanize.titleize %> 
