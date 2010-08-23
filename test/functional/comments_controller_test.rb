@@ -1,5 +1,6 @@
-require 'test_helper'
-
+"""require 'test_helper'
+"""
+'''
 class CommentsControllerTest < ActionController::TestCase
   test "should get index" do
     get :index
@@ -13,7 +14,11 @@ class CommentsControllerTest < ActionController::TestCase
   end
 
   test "should create comment" do
+'''
+"""  
     assert_difference('Comment.count') do
+"""
+'''
       post :create, :comment => { }
     end
 
@@ -36,10 +41,12 @@ class CommentsControllerTest < ActionController::TestCase
   end
 
   test "should destroy comment" do
+'''
+"""  
     assert_difference('Comment.count', -1) do
       delete :destroy, :id => comments(:one).to_param
     end
 
     assert_redirected_to comments_path
   end
-end
+end"""

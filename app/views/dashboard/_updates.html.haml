@@ -53,7 +53,7 @@
   .entry
     - if admin?
       %div{:id => "update_form"}
-        %h3
+        %p.links
           = link_to_remote 'Send an Update', :update => "update_form", :url => { :action => "load_update_form" }
         %br  
     - if updates.empty?

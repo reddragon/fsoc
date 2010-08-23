@@ -16,6 +16,7 @@
 #++
 
 class ProjectsController < ApplicationController
+  include ApplicationHelper
   before_filter :login_required, :except => ['index', 'show']
   # GET /projects
   # GET /projects.xml
