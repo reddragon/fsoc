@@ -27,6 +27,10 @@
     
   %li{ :id => 'active' }
     = link_to_remote 'Discuss', :update => "project_page_content", :url => {:action => "load_project_page_content", :partial => "comments/show", :id => params[:id] }  
+  
+  - if can_add_proposal?(@project)
+    %li
+      = link_to_remote 'Write a Proposal', :update => "project_page_content", :url => {:action => "load_project_page_content", :partial => "proposals/new", :id => params[:id] }  
     
 %br
 

@@ -18,7 +18,7 @@
 
 %ul{:id => "navlist"}
   %li{ :id => 'active' }
-    = link_to_remote 'Project', :update => "project_page_content", :url => {:action => "load_project_page_content", :partial => "project" }
+    = link_to_remote 'Project', :update => "project_page_content", :url => {:action => "load_project_page_content", :partial => "project", :id => params[:id]  }
     
   - if can_edit_project?(@project)
     %li
@@ -29,7 +29,7 @@
     
   - if can_add_proposal?(@project)
     %li
-      = link_to_remote 'Add Proposal', :update => "project_page_content", :url => {:action => "load_project_page_content", :partial => "proposals/new", :id => params[:id] }    
+      = link_to_remote 'Write a Proposal', :update => "project_page_content", :url => {:action => "load_project_page_content", :partial => "proposals/new", :id => params[:id] }    
     
 %br
  
@@ -44,8 +44,9 @@
       %b
         Project Definition:
       %br
-      %pre
-        =h wrap(@project.definition, 75)
+      - #TODO: Text is weirdly aligned when pre tag is used.
+      - #%pre  
+      =h wrap(@project.definition)
     
     %p
       %b
@@ -78,11 +79,7 @@
     
     %p{:class => "links" }
       - if can_add_task?(@project)
-        = link_to 'Add task', new_project_task_path(@project) 
-        - if can_add_proposal?(@project)  
-          |
-      - if can_add_proposal?(@project)
-        = link_to 'Write a proposal', new_project_proposal_path(@project)    
+        = link_to 'Add task', new_project_task_path(@project)   
     
     
     %hr

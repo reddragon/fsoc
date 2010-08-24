@@ -82,6 +82,12 @@ in any activity pertaining to the program, like writing proposals, submitting
 proposals etc. Whereas, if you choose 'summer_coding', you as an admin configure
 timeframes pertaining to each activity. 
 
+You can also enable an external authentication module through Dashboard. Just
+type the name of the module in textbox to enable that module. If you want
+to leave the default FSoC authentication mechanism, leave it blank. But, beware
+that all user(s) already existing in the system should also be able to log in 
+using the external authentication system.
+
 12. If you have chosen the year_round mode, ignore this step. If you have chosen
 the summer_coding mode, a new tab titled 'Configure Timeframes' would have now
 appeared in the dashboard tabs. 

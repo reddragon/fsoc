@@ -39,6 +39,11 @@
               = distance_of_time_in_words(journal.updated_at, Time.now, true)
               back
             .rightfloat
+              - if can_edit_journal?(journal)
+                = link_to_remote image_tag('edit_icon.jpg'), :update => "journal_space#{journal.id}", :url => {:action => 'inpage_edit', :id => journal.id}
+              - if can_delete_journal?(journal)
+                = link_to image_tag('delete_icon.gif'), project_task_journal_path(@task.project, @task, journal), :confirm => 'Are you sure?', :method => :delete
+            
               %small
                 %b
                   Journal
@@ -47,14 +52,8 @@
           %td
             = display_message_content(journal.content)
             %small
-              - if can_edit_journal?(journal)
-                = link_to_remote 'Edit', :update => "journal_space#{journal.id}", :url => {:action => 'inpage_edit', :id => journal.id}
-                &nbsp;|&nbsp;
-              - if can_delete_journal?(journal)
-                = link_to 'Delete', project_task_journal_path(@task.project, @task, journal), :confirm => 'Are you sure?', :method => :delete
-                &nbsp;|&nbsp;
-                = link_to_remote 'Reply', {:update => "journal_space", :url => {:action => 'inpage_new', :project_id => @task.project.id, :task_id => @task.id, :reply_to_id => journal.id}, :with => "'journal_content=' + encodeURIComponent($('journal_content').value)"}
-                %div{:id => "journal_space#{journal.id}"}
+              = link_to_remote 'Reply', {:update => "journal_space", :url => {:action => 'inpage_new', :project_id => @task.project.id, :task_id => @task.id, :reply_to_id => journal.id}, :with => "'journal_content=' + encodeURIComponent($('journal_content').value)"}
+              %div{:id => "journal_space#{journal.id}"}
           
   %div{:id => 'journal_space'}
     - if can_add_journal_entry?(@task)

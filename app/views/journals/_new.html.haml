@@ -20,7 +20,7 @@
     New Journal Entry
   - form_for journal, :url => {:action => :create, :project_id => journal.task.project.id, :task_id => journal.task.id }do |f|
     = f.error_messages
-    = f.text_area(:content, :rows => 25, :cols => 80)
+    = f.text_area(:content,  :onBlur => "this.rows='#{APP_CONST['text']['rows']['inactive']}'", :onFocus => "this.rows='#{APP_CONST['text']['rows']['active']}'", :rows => APP_CONST['text']['rows']['inactive'], :cols => APP_CONST['text']['cols'])
     %br
     = f.submit 'Create'
       

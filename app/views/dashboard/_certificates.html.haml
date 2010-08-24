@@ -39,12 +39,13 @@
     %span.date &nbsp;
   %div{:style => 'clear: both'} &nbsp;
   .entry
-    %h3
-      Proposals awaiting Admin Sign off
-    %br  
-    = render :partial => "proposals/list", :locals => {:proposals => pending_proposals}
-    %br
-    %br
+    - if !pending_proposals.empty?
+      %h3
+        Proposals awaiting Admin Sign off
+      %br  
+      = render :partial => "proposals/list", :locals => {:proposals => pending_proposals}
+      %br
+      %br
     %h3
       Upload Certificate Images
     %small

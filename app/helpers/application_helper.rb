@@ -73,7 +73,7 @@ module ApplicationHelper
     res
   end
   
-  def wrap(txt, col = 80)
+  def wrap(txt, col = 75)
     txt.gsub(/(.{1,#{col}})( +|$\n?)|(.{1,#{col}})/,
      "\\1\\3\n") 
   end

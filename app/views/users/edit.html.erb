@@ -53,7 +53,7 @@
     <%= f.text_field :org %></p>       
         
     <p>About me:<br/>
-    <%= f.text_area :bio %></p>
+    <%= f.text_area :bio,  :onBlur => "this.rows='#{APP_CONST['text']['rows']['inactive']}'", :onFocus => "this.rows='#{APP_CONST['text']['rows']['active']}'", :rows => APP_CONST['text']['rows']['inactive'] %></p>
     
     <% if !APP_CONFIG['auth'].nil? and !APP_CONFIG['auth']['module'].nil? %>
       <% # The password in side the database is not used if an

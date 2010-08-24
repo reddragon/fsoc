@@ -31,7 +31,7 @@
     </p>
     <p>
       <b><%= f.label :description %></b><br />
-      <%= f.text_area :description  %>
+      <%= f.text_area :description,  :onBlur => "this.rows='#{APP_CONST['text']['rows']['inactive']}'", :onFocus => "this.rows='#{APP_CONST['text']['rows']['active']}'", :rows => APP_CONST['text']['rows']['inactive']  %>
     </p>
     <p>
       <b><%= f.label :eta, 'Estimated time (in days)' %></b><br />

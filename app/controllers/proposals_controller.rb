@@ -168,8 +168,8 @@ class ProposalsController < ApplicationController
         @student.proposals.each do |proposal|
           if proposal == @proposal
             status = 'accepted'
-            @subject = APP_CONFIG['program']['name_full']
-            @message = "Congratulations! You have been accepted for the project '#   {@proposal.project.name}'!"
+            @subject = APP_CONFIG['program']['name']
+            @message = "Congratulations! You have been accepted for the project #{@proposal.project.name}!"
         
             #Sends a mail to the student on acceptance.
             #Remove if not required
@@ -178,7 +178,7 @@ class ProposalsController < ApplicationController
             update = Update.new
             update.user_id = @student.id
             update.message = @message
-            update.link_string = "See the project #{@proposal.project.name}!"
+            update.link_string = "See the project #{@proposal.project.name}"
             update.link = project_url(@proposal.project)
             update.save
             
@@ -199,8 +199,8 @@ class ProposalsController < ApplicationController
       @proposal.update_attributes(:status => 'rejected')
       
       @student = @proposal.student
-      @subject = APP_CONFIG['program']['name_full']
-      @message = "We are sorry, your proposal for the project '#{@proposal.project.name}' was not accepted."
+      @subject = APP_CONFIG['program']['name']
+      @message = "We are sorry, your proposal for the project #{@proposal.project.name} was not accepted."
           
       #Sends a mail to the student on acceptance.
       #Remove if not required

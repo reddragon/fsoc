@@ -29,7 +29,7 @@
     
   - if can_add_proposal?(@project)
     %li{ :id => 'active' }
-      = link_to_remote 'Add Proposal', :update => "project_page_content", :url => {:action => "load_project_page_content", :partial => "proposals/new", :id => params[:id] }    
+      = link_to_remote 'Write a Proposal', :update => "project_page_content", :url => {:action => "load_project_page_content", :partial => "proposals/new", :id => params[:id] }    
       
 %br
  
@@ -54,6 +54,6 @@
         %b
           = f.label :proposal_text
         %br  
-        = f.text_area :proposal_text, :cols => 80
+        = f.text_area :proposal_text, :onBlur => "this.rows='#{APP_CONST['text']['rows']['inactive']}'", :onFocus => "this.rows='#{APP_CONST['text']['rows']['active']}'", :rows => APP_CONST['text']['rows']['inactive'], :cols => 75
       %p
         = f.submit 'Create'

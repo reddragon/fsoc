@@ -1,0 +1,5 @@
+text:
+  cols: 50
+  rows: 
+    active: 25
+    inactive: 5

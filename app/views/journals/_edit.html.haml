@@ -20,7 +20,7 @@
   %b
     = f.label :content
   %br
-  = f.text_area :content 
+  = f.text_area(:content,  :onBlur => "this.rows='#{APP_CONST['text']['rows']['inactive']}'", :onFocus => "this.rows='#{APP_CONST['text']['rows']['active']}'", :rows => APP_CONST['text']['rows']['inactive'], :cols => APP_CONST['text']['cols']) 
   %br   
   = f.submit 'Update'
 

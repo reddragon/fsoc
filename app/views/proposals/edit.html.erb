@@ -31,7 +31,7 @@
 
     <p>
       <b><%= f.label :proposal_text %></b><br />
-      <%= f.text_area(:proposal_text, :cols => 80) %>
+      <%= f.text_area(:proposal_text, :onBlur => "this.rows='#{APP_CONST['text']['rows']['inactive']}'", :onFocus => "this.rows='#{APP_CONST['text']['rows']['active']}'", :rows => APP_CONST['text']['rows']['inactive'], :cols => 75) %>
     </p>
     
     <p>

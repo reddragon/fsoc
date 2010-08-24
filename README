@@ -1,6 +1,14 @@
 Four Seasons of Code - Student Project Management System
 ========================================================
 
+Authors: 
+
+Shreyank Gupta  (sgupta@redhat.com)
+Gaurav Menghani (gaurav.menghani@gmail.com)
+
+To know more about FSoC, refer doc/ABOUT.
+For Setup instructions, refer to doc/SETUP. 
+
 Written using Ruby On Rails. 
 
 Published under the GNU AFFERO GENERAL PUBLIC LICENSE version 3.
