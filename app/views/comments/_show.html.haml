@@ -69,7 +69,8 @@
           %td
             = display_message_content(comment.content)
             %small
-              = link_to_remote 'Reply', {:update => "comment_space", :url => {:controller => "comments", :action => 'inpage_new', :project_id => @project.id, :reply_to_id => comment.id}, :with => "'comment_content=' + encodeURIComponent($('comment_content').value)"}
+              - if logged_in?
+                = link_to_remote 'Reply', {:update => "comment_space", :url => {:controller => "comments", :action => 'inpage_new', :project_id => @project.id, :reply_to_id => comment.id}, :with => "'comment_content=' + encodeURIComponent($('comment_content').value)"}
               %div{:id => "comment_space#{comment.id}"}
         
   - if logged_in?
