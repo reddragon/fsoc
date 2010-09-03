@@ -101,14 +101,19 @@ class UsersController < ApplicationController
   # PUT /users/1.xml
   def update
     @user = User.find(params[:id])
-
     respond_to do |format|
-      if @user.update_attributes(params[:user])
-        flash[:notice] = 'User details were successfully updated.'
-        format.html { redirect_to(@user) }
-      else
+      if @user.user_type != params[:user][:user_type] && \
+        !(@user.proposals.empty? && @user.project_mentorships.empty?) 
+        flash[:notice] = 'You cannot edit your user type'
         format.html { render :action => "edit" }
-      end
+      else
+        if @user.update_attributes(params[:user])
+          flash[:notice] = 'User details were successfully updated.'
+          format.html { redirect_to(@user) }
+        else
+          format.html { render :action => "edit" }
+        end
+      end  
     end
   end
   

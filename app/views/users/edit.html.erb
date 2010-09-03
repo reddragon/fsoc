@@ -36,6 +36,26 @@
     <% form_for (@user) do |f| -%>
     <p><%= label_tag 'name' %><br/>
     <%= f.text_field :name %></p>
+    
+    <% if !admin? %>
+      <% if @user.proposals.empty? && @user.project_mentorships.empty? %>
+        <p><%= label_tag 'user type' %><br />
+        <%= f.select :user_type, options_for_select([['Student', 'student'], ['Mentor', 'mentor']], @user.user_type) %></p>
+      <% else %>
+        <p>User type: 
+        <b><%= @user.user_type.humanize %></b><br />
+        
+        <small>
+        <% if @user.user_type == 'mentor' %>  
+          You cannot change your user type now since you are mentoring a project.
+        <% else %>
+          You cannot change your user type now since you have written a proposal
+          for a project.
+        <% end %>
+        </small>
+        <br /></p>
+      <% end %>  
+    <% end %>
         
     <p><%= label_tag 'email' %><br/>
     <%= f.text_field :email %></p>
