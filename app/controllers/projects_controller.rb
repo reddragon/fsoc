@@ -191,8 +191,13 @@ class ProjectsController < ApplicationController
       @comments = @project.comments
       @form_comment = Comment.new
       @form_comment.project = @project
-      local_vars = { :project => @project, :comments => @comments, \
-        :form_comment => @form_comment } 
+      if logged_in?
+        local_vars = { :project => @project, :comments => @comments, \
+          :form_comment => @form_comment } 
+      else 
+        flash[:notice] = 'Login or Signup to access.'
+        params[:partial] = 'project'
+      end    
     end
     
     if params[:partial] == 'proposals/new'
