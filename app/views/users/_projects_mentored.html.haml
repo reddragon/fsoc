@@ -47,8 +47,6 @@
               - if can_delete_project?(project)
                 = link_to 'Delete', project, :confirm => 'Are you sure?', :method => :delete
           
-      %br
-        = render :partial => "proposals/list", :locals => { :proposals => user.proposal_mentorships }	
     - else
       %h3
         = link_to_remote image_tag('spindown-closed.gif'),  :update => "projects_mentored", :url => {:action => "toggle_tab", :open => true, :partial => "projects_mentored", :user_id => user.id }
