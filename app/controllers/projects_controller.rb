@@ -34,15 +34,57 @@ class ProjectsController < ApplicationController
   # GET /projects/1.xml
   def show
     @project = Project.find(params[:id])
-    @proposals = Array.new
-    if student?
-      @proposals = @project.proposals.find(:all, :conditions => {:student_id => current_user.id})
+    if params[:partial].nil? || params[:partial].empty?
+      params[:partial] = 'project'
     end
-    if can_view_proposal_list?(@project)
-      @proposals = @project.proposals
+    
+    if params[:partial] == 'edit'
+      if can_edit_project?(@project)
+        @local_vars = { :project => @project }
+      else
+        flash[:notice] = 'You are not authorized to edit this project'
+        params[:partial] = 'project'
+      end  
     end
-    @tasks = @project.tasks    
-
+    
+    if params[:partial] == 'comments/show'
+      @comments = @project.comments
+      @form_comment = Comment.new
+      @form_comment.project = @project
+      if logged_in?
+        @local_vars = { :project => @project, :comments => @comments, \
+          :form_comment => @form_comment } 
+      else 
+        flash[:notice] = 'Login or Signup to access.'
+        params[:partial] = 'project'
+      end    
+    end
+    
+    if params[:partial] == 'proposals/new'
+      if can_add_proposal?(@project)
+        @proposal = Proposal.new
+        @proposal.project = @project
+        @local_vars = { :proposal => @proposal }
+      else
+        params[:partial] = 'project'
+      end
+    end
+    
+    if params[:partial] == 'project'
+      @proposals = Array.new
+      if student?
+        @proposals = @project.proposals.find(:all, \
+          :conditions => {:student_id => current_user.id})
+      end
+      if can_view_proposal_list?(@project)
+        @proposals = @project.proposals
+      end
+      @tasks = @project.tasks    
+      @local_vars = { :project => @project, :proposals => @proposals, \
+        :tasks => @project.tasks }  
+    end    
+    @partial = params[:partial]
+    
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @project }
@@ -71,6 +113,7 @@ class ProjectsController < ApplicationController
       flash[:notice] = 'You are not authorised to edit this project.'
       redirect_to projects_url
     end
+    redirect_to project_url(@project, :partial => "edit")
   end
 
   # POST /projects

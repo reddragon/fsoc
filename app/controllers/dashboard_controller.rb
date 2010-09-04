@@ -17,19 +17,67 @@
 
 class DashboardController < ApplicationController
   def index
-    if admin?
-      @updates = Update.find(:all, \
-        :conditions => ["user_id = ?", current_user.id], 
-        :order => "id DESC")
-    else
-      if logged_in?
-        appropriate_group = "only_#{current_user.user_type}s"
-        @updates = Update.find(:all, \
-          :conditions => [ "user_id = ? OR user_group = 'everyone' OR user_group = ?", \
-          current_user.id, appropriate_group ],
-          :order => "id DESC")
+    if logged_in?  
+      if params[:partial].nil? || params[:partial].empty?
+        @partial = "updates"
+      else
+        @partial = params[:partial]
+      end
+    
+      if (params[:partial] == "configure" || \
+        params[:partial] == "application_settings" || \
+        params[:partial] == "certificates") && !admin?
+      
+        flash[:notice] = 'You are not authorized to perform this action.'
+        @partial = "updates"
+      end
+      if params[:partial] == "updates" || @partial == "updates"
+        if admin?
+          @updates = Update.find(:all, \
+            :conditions => ["user_id = ?", current_user.id], 
+            :order => "id DESC")
+        else
+          appropriate_group = "only_#{current_user.user_type}s"
+          @updates = Update.find(:all, \
+            :conditions => [ "user_id = ? OR user_group = 'everyone' OR user_group = ?", \
+            current_user.id, appropriate_group ],
+            :order => "id DESC")
+        end
+        @locals = { :updates => @updates }
+      else
+        if params[:partial] == "certificates"
+          @pending_proposals = Proposal.find(:all, \
+            :conditions => {:status => "admin_sign_off_pending"})  
+          @locals = { :pending_proposals => @pending_proposals } 
+        else
+          if params[:partial] == "task_status"
+            if mentor?(current_user) || admin?(current_user)
+             #Is the set of projects which are being mentored, may have been proposed too
+             @projects_mentoring = current_user.project_mentorships
+             #Union of the proposed and mentored projects
+             @projects = (current_user.project_proposals + @projects_mentoring).uniq
+             #Is the set of projects which have only been proposed by the user, not mentored
+             @projects_only_proposed = @projects - current_user.project_mentorships
+             render :partial => "task_status", \
+               :locals => { :projects_mentoring => @projects_mentoring, \
+                 :projects => @projects, \
+                 :projects_only_proposed => @projects_only_proposed}
+            else 
+              @projects = current_user.project
+              @locals = { :projects => @projects }
+           end
+          else
+            if params[:partial] == "application_settings"
+              @content = File.read("#{RAILS_ROOT}/public/About.txt")
+              @locals = { :content => @content }
+            end  
+          end       
+        end  
       end
     end
+    
+    
+    
   end
   
   def set_timeframes
@@ -74,8 +122,8 @@ class DashboardController < ApplicationController
         else
           if APP_CONFIG['timeframes'][e[:dates][0]] < APP_CONFIG['timeframes'][f[:dates][0]] 
             flash[:notice] = "#{e[:name]} should not be before #{f[:name]}"
-            #TODO Make it load the configure page
-            redirect_to :action => "index", :validation_error => "true"
+            redirect_to :action => "index", :validation_error => "true", \
+              :partial => "configure"
             return
           end  
         end
@@ -98,15 +146,13 @@ class DashboardController < ApplicationController
         new_event.end_at = APP_CONFIG['timeframes'][e[:dates][1]]
         new_event.task_id = -1
         if !new_event.save
-          #TODO Make it load the configure action
           flash[:notice] = "Could not set timeframes."
-          redirect_to :action => "index"
+          redirect_to :action => "index", :partial => "configure"
         end
     end
     
     flash[:notice] = "Timeframes successfully set."
-    #TODO Make it load the configure action
-    redirect_to :action => "index"
+    redirect_to :action => "index", :partial => "configure"
   end
   
   def configure
@@ -138,10 +184,10 @@ class DashboardController < ApplicationController
         file_upload(params[:uploadwatermark], "public/images/certificate", params[:watermark_name], 'watermark')
       end
       flash[:notice] = 'Images uploaded sucessfully.'
-      redirect_to :controller => "dashboard"
+      redirect_to :action => "index", :partial => "certificates"
     else
       flash[:notice] = 'You are not authorized to perform this action.'
-      redirect_to :controller => "dashboard"
+      redirect_to :action => "index"
     end
   end
   
@@ -174,6 +220,11 @@ class DashboardController < ApplicationController
   end
   
   def update_app_settings
+    if !admin?
+      flash[:notice] = 'You are not authorized to perform this action.'
+      redirect_to :controller => "dashboard", :action => "index"
+    end
+    
     if params[:main] == 'fsoc' and params[:sub] == 'mode'
       if params[:value] == 'summer_coding'
         date_params = [ 'pct_from', 'pct_to', 'pst_from', 'pst_to', 'pat_from',\
@@ -189,7 +240,7 @@ class DashboardController < ApplicationController
     
     if params[:value].nil?
       flash[:notice] = 'Settings were not updated, since the field was nil'
-      redirect_to :controller => "dashboard"
+      redirect_to :controller => "dashboard", :partial => "application_settings"
     else
       if params[:main] == 'auth' && params[:sub] == 'module'
         params[:value] = params[:value].underscore
@@ -208,15 +259,8 @@ class DashboardController < ApplicationController
         output.close
       end
       flash[:notice] = 'Settings successfully updated'
-      redirect_to :controller => "dashboard"
+      redirect_to :controller => "dashboard", :partial => "application_settings"
    end   
-  end
-  
-  def application_settings
-    if !admin?
-      flash[:notice] = 'You are not authorized to perform this action.'
-      redirect_to :controller => "dashboard", :action => "index"
-    end
   end
   
   def load_update_form
@@ -243,7 +287,7 @@ class DashboardController < ApplicationController
     else
       flash[:notice] = 'Could not send the update.'
     end
-    redirect_to :controller => "dashboard"
+    redirect_to :controller => "dashboard", :partial => "updates"
   end
   
   def load_dashboard_content

@@ -18,5 +18,6 @@
 = javascript_include_tag :defaults
 
 %div{ :id => "project_page_content" }
-  = render :partial => "project", :locals => { :id => params[:id] }
+  = render :partial => @partial, :locals => @local_vars
+
 
