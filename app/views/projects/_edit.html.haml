@@ -19,7 +19,7 @@
 
 %ul{:id => "navlist"}
   %li
-    = link_to_remote 'Project', :update => "project_page_content", :url => {:action => "load_project_page_content", :partial => "project" }
+    = link_to_remote 'Project', :update => "project_page_content", :url => {:action => "load_project_page_content", :partial => "project", :id => params[:id] }
     
   - if can_edit_project?(@project)
     %li{ :id => 'active' }
