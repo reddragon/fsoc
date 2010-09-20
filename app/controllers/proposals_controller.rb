@@ -65,6 +65,12 @@ class ProposalsController < ApplicationController
         mentor_update.link_string = 'See the proposal'
         mentor_update.link = project_proposal_url(@proposal.project, @proposal)
         mentor_update.save
+        
+        #Send an email to the mentor whenever a proposal is submitted
+        mail_subject = "Proposal for the project #{@proposal.project.name}"
+        mail_body = "Hi, #{current_user.login} has written a proposal for the project #{@proposal.project.name}:\n\n" + @proposal.proposal_text
+        Mail.deliver_message(@proposal.project.mentor.email, mail_subject, mail_body)
+        
       end
       
       flash[:notice] = 'Your proposal was successfully created.'
